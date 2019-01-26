@@ -1,0 +1,7 @@
+data/org.gnome.Organizer.desktop.in
+data/org.gnome.Organizer.appdata.xml.in
+data/org.gnome.Organizer.gschema.xml
+src/window.ui
+src/main.py
+src/window.py
+

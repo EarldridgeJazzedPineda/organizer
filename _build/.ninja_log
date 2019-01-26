@@ -1,0 +1,15 @@
+# ninja log v5
+1	1229	1547124836	data/org.gnome.Organizer.desktop	5eef453bac4365cd
+0	37	1548489724	src/organizer.gresource	78c4809cb7171ed0
+1	1198	1547124836	data/org.gnome.Organizer.appdata.xml	d5833cf89d9d45a7
+0	1626	0	meson-install	9bd7faa9472bf40f
+1	1622	0	meson-install	9bd7faa9472bf40f
+0	1740	0	meson-install	9bd7faa9472bf40f
+0	1535	0	meson-install	9bd7faa9472bf40f
+0	2104	0	meson-install	9bd7faa9472bf40f
+0	2094	0	meson-install	9bd7faa9472bf40f
+0	1504	0	meson-install	9bd7faa9472bf40f
+0	1447	0	meson-install	9bd7faa9472bf40f
+0	1400	0	meson-install	9bd7faa9472bf40f
+0	1454	0	meson-install	9bd7faa9472bf40f
+0	2243	0	meson-install	9bd7faa9472bf40f
