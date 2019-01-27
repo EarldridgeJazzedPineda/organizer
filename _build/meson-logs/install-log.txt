@@ -9,11 +9,3 @@
 /app/share/organizer/organizer/gi_composites.py
 /app/share/organizer/organizer/main.py
 /app/share/organizer/organizer/window.py
-/app/share/organizer/organizer
-/app/bin
-/app/share/glib-2.0/schemas
-/app/share/glib-2.0
-/app/share/organizer
-/app/share/appdata
-/app/share/applications
-/app/share

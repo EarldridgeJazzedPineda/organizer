@@ -19,12 +19,6 @@ from gi.repository import Gtk
 from .gi_composites import GtkTemplate
 import sys
 
-def error_dialogue(parent_window):
-    error = Gtk.MessageDialog(parent_window, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "work in progress boi")
-    error.set_modal(True)
-    error.run()
-    error.destroy()
-
 @GtkTemplate(ui='/org/gnome/Organizer/window.ui')
 class OrganizerWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'OrganizerWindow'
@@ -47,7 +41,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.run()
         dialog.destroy()
 
-    def on_keyboard_shortcuts_button_clicked(self, button):
-        error_dialogue(self)
     def row(self, listbox, listboxrow):
-        error_dialogue(self)
+        error = Gtk.MessageDialog(self, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "work in progress boi")
+        error.set_modal(True)
+        error.run()
+        error.destroy()
