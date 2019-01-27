@@ -19,9 +19,35 @@ from gi.repository import Gtk
 from .gi_composites import GtkTemplate
 import sys
 
+def error_dialogue(parent_window):
+    error = Gtk.MessageDialog(parent_window, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "work in progress boi")
+    error.set_modal(True)
+    error.run()
+    error.destroy()
+
 @GtkTemplate(ui='/org/gnome/Organizer/window.ui')
 class OrganizerWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'OrganizerWindow'
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+    def on_about_button_clicked(self, button):
+        print("about clicked")
+        dialog = Gtk.AboutDialog()
+        dialog.set_modal(True)
+        dialog.set_authors(["Avi Wadhwa"])
+        dialog.set_artists(["lol there's no artwork"])
+        dialog.set_logo_icon_name(None)
+        dialog.set_license_type(Gtk.License.GPL_3_0)
+        dialog.set_program_name(_("Organizer"))
+        dialog.set_translator_credits(_("translator-credits"))
+        dialog.set_version("0.1")
+        dialog.set_comments(_("Organizes your files"))
+        dialog.set_website("https://gitlab.gnome.org/aviwad/organizer")
+        dialog.run()
+        dialog.destroy()
+
+    def on_keyboard_shortcuts_button_clicked(self, button):
+        error_dialogue(self)
+    def row(self, listbox, listboxrow):
+        error_dialogue(self)

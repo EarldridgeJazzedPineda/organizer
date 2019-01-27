@@ -114,6 +114,7 @@
                   <object class="GtkListBox" id="location_list">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="selection_mode">none</property>
                     <property name="activate_on_single_click">False</property>
                     <signal name="row-activated" handler="row" swapped="no"/>
                     <child>
