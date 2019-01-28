@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 from .gi_composites import GtkTemplate
 import sys
+
+folders=[GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS), "~"]
 
 @GtkTemplate(ui='/org/gnome/Organizer/window.ui')
 class OrganizerWindow(Gtk.ApplicationWindow):
@@ -41,8 +43,12 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.run()
         dialog.destroy()
 
-    def row(self, listbox, listboxrow):
-        error = Gtk.MessageDialog(self, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "work in progress boi")
-        error.set_modal(True)
-        error.run()
-        error.destroy()
+    def row_activated(self, widget, row):
+        row_index = row.get_index()
+        #if row.get_index() is 7 then open filechooser
+        if (row_index == 7):
+            print("time to die")
+        else:
+            directory = folders[row_index]
+            print(directory)
+        #otherwise set respective location per index
