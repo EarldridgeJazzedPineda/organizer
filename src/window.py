@@ -17,9 +17,18 @@
 
 from gi.repository import Gtk, GLib
 from .gi_composites import GtkTemplate
-import sys
+import sys, os, threading
 
-folders=[GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS), "~"]
+def threadless_print_filenames(directory):
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            print(os.path.join(root, file))
+
+def print_filenames(directory):
+    thread = threading.Thread(target=threadless_print_filenames(directory))
+    thread.start()
+
+folders=[GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS), os.path.expanduser('~')]
 
 @GtkTemplate(ui='/org/gnome/Organizer/window.ui')
 class OrganizerWindow(Gtk.ApplicationWindow):
@@ -47,8 +56,16 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         row_index = row.get_index()
         #if row.get_index() is 7 then open filechooser
         if (row_index == 7):
-            print("time to die")
+            directory_chooser = Gtk.FileChooserDialog("Please choose a folder", None,
+            Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            "Select", Gtk.ResponseType.OK))
+            directory_chooser.run()
+            directory = directory_chooser.get_filename()
+            directory_chooser.destroy()
+            print_filenames(directory)
         else:
             directory = folders[row_index]
             print(directory)
+            print_filenames(directory)
         #otherwise set respective location per index
