@@ -59,13 +59,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         self.go_back.hide()
         self.gtk_stack.set_visible_child(self.start_screen)
 
-        # loop and delete all previous file ListBoxRows
-
-        children = self.all_location_list.get_children()
-        children_length = len(children)
-        for entry in range (0, children_length):
-            self.all_location_list.remove(children[entry])
-
     # About Menu
 
     def on_about_button_clicked(self, button):
@@ -89,6 +82,13 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     # When any location is clicked on homescreen
 
     def row_activated(self, widget, row):
+
+        # loop and delete all previous file ListBoxRows
+
+        children = self.all_location_list.get_children()
+        children_length = len(children)
+        for entry in range (0, children_length):
+            self.all_location_list.remove(children[entry])
         
         # Unhide the back button
         
