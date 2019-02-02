@@ -1,21 +1,7 @@
 # ninja log v5
-1	1229	1547124836	data/org.gnome.Organizer.desktop	5eef453bac4365cd
-0	18	1549080980	src/organizer.gresource	78c4809cb7171ed0
-1	1198	1547124836	data/org.gnome.Organizer.appdata.xml	d5833cf89d9d45a7
-0	1555	0	meson-install	9bd7faa9472bf40f
-0	1425	0	meson-install	9bd7faa9472bf40f
-0	1460	0	meson-install	9bd7faa9472bf40f
-0	1511	0	meson-install	9bd7faa9472bf40f
-0	1476	0	meson-install	9bd7faa9472bf40f
-0	1564	0	meson-install	9bd7faa9472bf40f
-0	15	1549087379	src/organizer.gresource	78c4809cb7171ed0
-0	1409	0	meson-install	9bd7faa9472bf40f
-0	14	1549087471	src/organizer.gresource	78c4809cb7171ed0
-0	1424	0	meson-install	9bd7faa9472bf40f
-0	15	1549087612	src/organizer.gresource	78c4809cb7171ed0
-0	1394	0	meson-install	9bd7faa9472bf40f
-0	15	1549087636	src/organizer.gresource	78c4809cb7171ed0
-0	1419	0	meson-install	9bd7faa9472bf40f
-0	1428	0	meson-install	9bd7faa9472bf40f
-0	1552	0	meson-install	9bd7faa9472bf40f
-0	1428	0	meson-install	9bd7faa9472bf40f
+1	16	1549111067	src/organizer.gresource	78c4809cb7171ed0
+0	459	1549111067	data/org.gnome.Organizer.desktop	5eef453bac4365cd
+0	463	1549111067	data/org.gnome.Organizer.appdata.xml	d5833cf89d9d45a7
+0	877	0	meson-install	9bd7faa9472bf40f
+0	583	1549111239	build.ninja	6f549376c78e4586
+0	925	0	meson-install	9bd7faa9472bf40f
