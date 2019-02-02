@@ -32,20 +32,16 @@ folders = [
     os.path.expanduser('~'),
     ]
 
-#@GtkTemplate("/org/gnome/Organizer/row.ui")
-#class file_row(Gtk.ListBoxRow):
-#    file_row = GtkTemplate.Child()
-#    filename_label = GtkTemplate.Child()
-#    def filerow(self, name):
-#        self.filename_label.set_text(name)
-#        return(file_row)
-
 @GtkTemplate("/org/gnome/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
+
+    # initializing widgets to be used later
+    
     gtk_stack = GtkTemplate.Child()
     stack_2 = GtkTemplate.Child()
     go_back = GtkTemplate.Child()
     start_screen = GtkTemplate.Child()
+    all_scrolled = GtkTemplate.Child()
     all_location_list = GtkTemplate.Child()
     __gtype_name__ = 'OrganizerWindow'
 
@@ -53,11 +49,24 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
+    # Back Button
+
     def go_back_clicked_cb(self, button):
+
+        #TODO map this to Alt+left keyboard shortcut
+        # hide the back button and go to start screen
+        
         self.go_back.hide()
         self.gtk_stack.set_visible_child(self.start_screen)
 
-    # About menu!
+        # loop and delete all previous file ListBoxRows
+
+        children = self.all_location_list.get_children()
+        children_length = len(children)
+        for entry in range (0, children_length):
+            self.all_location_list.remove(children[entry])
+
+    # About Menu
 
     def on_about_button_clicked(self, button):
         dialog = Gtk.AboutDialog()
@@ -78,13 +87,16 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.destroy()
 
     # When any location is clicked on homescreen
-    def row_activated(self, widget, row):
 
+    def row_activated(self, widget, row):
+        
         # Unhide the back button
+        
         self.go_back.show()
         row_index = row.get_index()
 
         # Open filechooser if "other" option clicked
+        
         if row_index == 7:
             directory_chooser = \
                 Gtk.FileChooserDialog('Please choose a folder', None,
@@ -106,9 +118,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # Get foldername from respective folder array index
             directory = folders[row_index]
             response_type = True
-
         if response_type:
-
             # TODO: do something with the folder
             files = []
             label_name = ''

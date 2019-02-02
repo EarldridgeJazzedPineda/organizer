@@ -555,14 +555,16 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="position">200</property>
+            <property name="position_set">True</property>
             <child>
               <object class="GtkStackSidebar">
+                <property name="width_request">200</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stack">file_sorting</property>
               </object>
               <packing>
-                <property name="resize">True</property>
+                <property name="resize">False</property>
                 <property name="shrink">False</property>
               </packing>
             </child>
@@ -590,7 +592,6 @@
                         <property name="vexpand">True</property>
                         <property name="hscrollbar_policy">never</property>
                         <property name="shadow_type">in</property>
-                        <property name="min_content_width">225</property>
                         <property name="propagate_natural_height">True</property>
                         <child>
                           <object class="GtkViewport" id="all_viewport_location">
@@ -678,8 +679,8 @@
                 </child>
               </object>
               <packing>
-                <property name="resize">True</property>
-                <property name="shrink">True</property>
+                <property name="resize">False</property>
+                <property name="shrink">False</property>
               </packing>
             </child>
           </object>
