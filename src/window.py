@@ -17,55 +17,113 @@
 
 from gi.repository import Gtk, GLib
 from .gi_composites import GtkTemplate
-import sys, os, threading
+import sys
+import os
 
-def threadless_print_filenames(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            print(os.path.join(root, file))
+# array mapping each xdg folder with the GtkList options 1-6
 
-def print_filenames(directory):
-    thread = threading.Thread(target=threadless_print_filenames(directory))
-    thread.start()
+folders = [
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP),
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS),
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD),
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC),
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES),
+    GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS),
+    os.path.expanduser('~'),
+    ]
 
-folders=[GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES), GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS), os.path.expanduser('~')]
+#@GtkTemplate("/org/gnome/Organizer/row.ui")
+#class file_row(Gtk.ListBoxRow):
+#    file_row = GtkTemplate.Child()
+#    filename_label = GtkTemplate.Child()
+#    def filerow(self, name):
+#        self.filename_label.set_text(name)
+#        return(file_row)
 
-@GtkTemplate(ui='/org/gnome/Organizer/window.ui')
+@GtkTemplate("/org/gnome/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
+    gtk_stack = GtkTemplate.Child()
+    stack_2 = GtkTemplate.Child()
+    go_back = GtkTemplate.Child()
+    start_screen = GtkTemplate.Child()
+    all_location_list = GtkTemplate.Child()
     __gtype_name__ = 'OrganizerWindow'
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+
+    def go_back_clicked_cb(self, button):
+        self.go_back.hide()
+        self.gtk_stack.set_visible_child(self.start_screen)
+
+    # About menu!
+
     def on_about_button_clicked(self, button):
-        print("about clicked")
         dialog = Gtk.AboutDialog()
         dialog.set_modal(True)
-        dialog.set_authors(["Avi Wadhwa"])
+        dialog.set_authors(['Avi Wadhwa'])
         dialog.set_artists(["lol there's no artwork"])
+
+        # TODO: get icon
+
         dialog.set_logo_icon_name(None)
         dialog.set_license_type(Gtk.License.GPL_3_0)
-        dialog.set_program_name(_("Organizer"))
-        dialog.set_translator_credits(_("translator-credits"))
-        dialog.set_version("0.1")
-        dialog.set_comments(_("Organizes your files"))
-        dialog.set_website("https://gitlab.gnome.org/aviwad/organizer")
+        dialog.set_program_name(_('Organizer'))
+        dialog.set_translator_credits(_('translator-credits'))
+        dialog.set_version('0.1')
+        dialog.set_comments(_('Organizes your files'))
+        dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
         dialog.run()
         dialog.destroy()
 
+    # When any location is clicked on homescreen
     def row_activated(self, widget, row):
+
+        # Unhide the back button
+        self.go_back.show()
         row_index = row.get_index()
-        #if row.get_index() is 7 then open filechooser
-        if (row_index == 7):
-            directory_chooser = Gtk.FileChooserDialog("Please choose a folder", None,
-            Gtk.FileChooserAction.SELECT_FOLDER,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            "Select", Gtk.ResponseType.OK))
-            directory_chooser.run()
+
+        # Open filechooser if "other" option clicked
+        if row_index == 7:
+            directory_chooser = \
+                Gtk.FileChooserDialog('Please choose a folder', None,
+                    Gtk.FileChooserAction.SELECT_FOLDER,
+                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select'
+                    , Gtk.ResponseType.OK))
+            response = directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+            directory_chooser.set_modal = True
+
+            # Get foldername and then close the filechooser
             directory = directory_chooser.get_filename()
             directory_chooser.destroy()
-            print_filenames(directory)
         else:
+
+            # Get foldername from respective folder array index
             directory = folders[row_index]
-            print(directory)
-            print_filenames(directory)
-        #otherwise set respective location per index
+            response_type = True
+
+        if response_type:
+
+            # TODO: do something with the folder
+            files = []
+            label_name = ''
+            for entry in os.scandir(directory):
+                if entry.is_file() and entry.name.startswith('.') == False:
+                    #TODO move files to different categories
+                    files.append(entry)
+                    row = Gtk.Builder()
+                    row.add_objects_from_resource("/org/gnome/Organizer/row.ui", ("file_row", "filename_label"))
+                    file_row = row.get_object("file_row")
+                    filename_label = row.get_object("filename_label")
+                    filename_label.set_text(entry.name)
+                    self.all_location_list.add(file_row)
+                    label_name = label_name + ' \n ' + entry.name
+
+            self.gtk_stack.set_visible_child(self.stack_2)
+            # TODO fix label looks
+            # self.file_list_label.set_text(label_name)
