@@ -89,10 +89,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         children_length = len(children)
         for entry in range (0, children_length):
             self.all_location_list.remove(children[entry])
-        
-        # Unhide the back button
-        
-        self.go_back.show()
+
         row_index = row.get_index()
 
         # Open filechooser if "other" option clicked
@@ -119,6 +116,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             directory = folders[row_index]
             response_type = True
         if response_type:
+
+            # Unhide the back button
+            self.go_back.show()
+            
             # TODO: do something with the folder
             files = []
             label_name = ''
