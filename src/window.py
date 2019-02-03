@@ -14,8 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Handy
 from .gi_composites import GtkTemplate
 import sys
 import os
@@ -31,12 +30,15 @@ folders = [
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS),
     os.path.expanduser('~'),
     ]
-
+# to initiate the custom libhandy widgets
+tmp = Handy.Column()
+tmp = Handy.Leaflet()
+tmp = None
 @GtkTemplate("/org/gnome/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
 
     # initializing widgets to be used later
-    
+
     gtk_stack = GtkTemplate.Child()
     stack_2 = GtkTemplate.Child()
     go_back = GtkTemplate.Child()
