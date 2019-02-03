@@ -31,9 +31,7 @@ folders = [
     os.path.expanduser('~'),
     ]
 # to initiate the custom libhandy widgets
-tmp = Handy.Column()
-tmp = Handy.Leaflet()
-tmp = None
+Handy.init()
 @GtkTemplate("/org/gnome/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
 
@@ -57,7 +55,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
         #TODO map this to Alt+left keyboard shortcut
         # hide the back button and go to start screen
-        
+        #TODO if child visible is File Sorting, then go back to page, otherwise start screen
         self.go_back.hide()
         self.gtk_stack.set_visible_child(self.start_screen)
 
@@ -137,5 +135,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                     label_name = label_name + ' \n ' + entry.name
 
             self.gtk_stack.set_visible_child(self.stack_2)
+            # TODO change Visible Child of HdyLeaflet when StackSwitcher clicked
             # TODO fix label looks
             # self.file_list_label.set_text(label_name)
