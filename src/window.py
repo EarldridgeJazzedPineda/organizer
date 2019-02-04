@@ -32,7 +32,7 @@ folders = [
     ]
 # to initiate the custom libhandy widgets
 Handy.init()
-@GtkTemplate("/org/gnome/Organizer/window.ui")
+@GtkTemplate("/avi/wad/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
 
     # initializing widgets to be used later
@@ -141,7 +141,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                     #TODO move files to different categories
                     files.append(entry)
                     row = Gtk.Builder()
-                    row.add_objects_from_resource("/org/gnome/Organizer/row.ui", ("file_row", "filename_label"))
+                    row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
                     file_row = row.get_object("file_row")
                     filename_label = row.get_object("filename_label")
                     filename_label.set_text(entry.name)

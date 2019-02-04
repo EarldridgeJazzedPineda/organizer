@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="organizer">
-	<schema id="org.gnome.Organizer" path="/org/gnome/Organizer/">
+	<schema id="avi.wad.Organizer" path="/avi/wad/Organizer/">
 	</schema>
 </schemalist>

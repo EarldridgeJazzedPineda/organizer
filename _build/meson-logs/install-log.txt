@@ -1,9 +1,9 @@
 # List of files installed by Meson
 # Does not contain files installed by custom scripts.
-/app/share/applications/org.gnome.Organizer.desktop
-/app/share/appdata/org.gnome.Organizer.appdata.xml
+/app/share/applications/avi.wad.Organizer.desktop
+/app/share/appdata/avi.wad.Organizer.appdata.xml
 /app/share/organizer/organizer.gresource
-/app/share/glib-2.0/schemas/org.gnome.Organizer.gschema.xml
+/app/share/glib-2.0/schemas/avi.wad.Organizer.gschema.xml
 /app/bin/organizer
 /app/share/organizer/organizer/__init__.py
 /app/share/organizer/organizer/gi_composites.py
