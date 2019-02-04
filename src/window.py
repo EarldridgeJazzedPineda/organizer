@@ -44,6 +44,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     all_scrolled = GtkTemplate.Child()
     all_location_list = GtkTemplate.Child()
     header_bar = GtkTemplate.Child()
+    sidebar = GtkTemplate.Child()
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
@@ -54,12 +55,17 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
     def go_back_clicked_cb(self, button):
 
-        #TODO map this to Alt+left keyboard shortcut
-        # hide the back button and go to start screen
-        #TODO if child visible is File Sorting, then go back to page, otherwise start screen
-        self.go_back.hide()
-        self.header_bar.set_subtitle("")
-        self.gtk_stack.set_visible_child(self.start_screen)
+        # if is folded (mobile mode) and leaflet model is 2nd (on content), then make child 1 (go to sidebar). otherwise actual back to startscreen
+        if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
+            # make the child 1
+            self.stack_2.set_visible_child(self.sidebar)
+        else:
+            #TODO map this to Alt+left keyboard shortcut
+            # hide the back button and go to start screen
+            #TODO if child visible is File Sorting, then go back to page, otherwise start screen
+            self.go_back.hide()
+            self.header_bar.set_subtitle("")
+            self.gtk_stack.set_visible_child(self.start_screen)
 
     # About Menu
 
@@ -80,6 +86,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
         dialog.run()
         dialog.destroy()
+    def sidebar_clicked(self, widget, eventbutton):
+        self.stack_2.set_visible_child(widget.get_stack())
 
     # When any location is clicked on homescreen
 
