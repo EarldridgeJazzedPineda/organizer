@@ -43,6 +43,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     start_screen = GtkTemplate.Child()
     all_scrolled = GtkTemplate.Child()
     all_location_list = GtkTemplate.Child()
+    header_bar = GtkTemplate.Child()
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
@@ -57,6 +58,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         # hide the back button and go to start screen
         #TODO if child visible is File Sorting, then go back to page, otherwise start screen
         self.go_back.hide()
+        self.header_bar.set_subtitle("")
         self.gtk_stack.set_visible_child(self.start_screen)
 
     # About Menu
@@ -116,6 +118,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             directory = folders[row_index]
             response_type = True
         if response_type:
+
+            # Change title to folder
+            self.header_bar.set_subtitle(os.path.basename(directory))
 
             # Unhide the back button
             self.go_back.show()
