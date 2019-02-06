@@ -27,7 +27,6 @@ from .window import OrganizerWindow
 
 class Application(Gtk.Application):
     def __init__(self):
-        # TODO: change ID and remove "org.gnome"
         super().__init__(application_id='avi.wad.Organizer',
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 

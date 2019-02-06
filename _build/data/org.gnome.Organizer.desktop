@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=organizer
-Exec=organizer
-Terminal=false
-Type=Application
-Categories=GTK;
-StartupNotify=true

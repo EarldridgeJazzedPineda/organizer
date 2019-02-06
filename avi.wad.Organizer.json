@@ -51,7 +51,7 @@
                 }
             ]
         },
-
+        "python3-python-magic.json",
         {
             "name" : "organizer",
             "buildsystem" : "meson",

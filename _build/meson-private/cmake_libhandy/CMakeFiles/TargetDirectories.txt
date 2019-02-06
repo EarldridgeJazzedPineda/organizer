@@ -1,2 +1,0 @@
-/home/aviwad/Projects/Organizer/_build/meson-private/cmake_libhandy/CMakeFiles/rebuild_cache.dir
-/home/aviwad/Projects/Organizer/_build/meson-private/cmake_libhandy/CMakeFiles/edit_cache.dir

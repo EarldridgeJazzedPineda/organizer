@@ -16,11 +16,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import Gtk, GLib, Handy
 from .gi_composites import GtkTemplate
+import magic
 import sys
 import os
+import threading
+import time
 
 # array mapping each xdg folder with the GtkList options 1-6
-
 folders = [
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP),
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS),
@@ -45,11 +47,30 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     header_bar = GtkTemplate.Child()
     sidebar = GtkTemplate.Child()
     scrolled_start_screen = GtkTemplate.Child()
+    spinner = Gtk.Spinner()
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+
+    # test function for threading
+    def print_mimes(self, directory):
+        files = []
+        for entry in os.scandir(directory):
+            if entry.is_file() and entry.name.startswith('.') == False:
+                #TODO move files to different categories
+                files.append(entry)
+                row = Gtk.Builder()
+                print(magic.from_file(entry.path, mime=True))
+                #print(str(entry.path)+" is "+str(mimetypes.guess_type(entry.name,strict=False)[0]))
+                row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
+                file_row = row.get_object("file_row")
+                filename_label = row.get_object("filename_label")
+                filename_label.set_text(entry.name)
+                GLib.idle_add(self.all_location_list.add, file_row)
+        print(len(files))
+        GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
 
     # Back Button
 
@@ -63,7 +84,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #TODO map this to Alt+left keyboard shortcut
             # hide the back button and go to start screen
             #TODO if child visible is File Sorting, then go back to page, otherwise start screen
+            #self.spinner.destroy()
             self.go_back.hide()
+            self.spinner.destroy()
             self.header_bar.set_subtitle("")
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
@@ -92,7 +115,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     # When any location is clicked on homescreen
 
     def row_activated(self, widget, row):
-
+        
         # loop and delete all previous file ListBoxRows
 
         children = self.all_location_list.get_children()
@@ -126,29 +149,18 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             directory = folders[row_index]
             response_type = True
         if response_type:
+            row.get_child().pack_end(self.spinner, False, False, 10)
+            self.spinner.set_visible(True)
+            self.spinner.props.active = True
+            self.spinner.start()
+            #TODO make this work before the file intensive operation
+            thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
+            thread_testing.start()
 
             # Change title to folder
             self.header_bar.set_subtitle(os.path.basename(directory))
 
             # Unhide the back button
             self.go_back.show()
-            
-            # TODO: do something with the folder
-            files = []
-            label_name = ''
-            for entry in os.scandir(directory):
-                if entry.is_file() and entry.name.startswith('.') == False:
-                    #TODO move files to different categories
-                    files.append(entry)
-                    row = Gtk.Builder()
-                    row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
-                    file_row = row.get_object("file_row")
-                    filename_label = row.get_object("filename_label")
-                    filename_label.set_text(entry.name)
-                    self.all_location_list.add(file_row)
-                    label_name = label_name + ' \n ' + entry.name
-
-            self.gtk_stack.set_visible_child(self.stack_2)
-            # TODO change Visible Child of HdyLeaflet when StackSwitcher clicked
-            # TODO fix label looks
-            # self.file_list_label.set_text(label_name)
+            #self.print_mimes(directory)
+            #self.gtk_stack.set_visible_child(self.stack_2)
