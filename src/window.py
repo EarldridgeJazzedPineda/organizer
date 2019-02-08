@@ -14,9 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from gi.repository import Gtk, GLib, Handy
+from gi.repository import Gtk, GLib, Handy, Gio
 from .gi_composites import GtkTemplate
-import magic
 import sys
 import os
 import threading
@@ -43,34 +42,59 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     stack_2 = GtkTemplate.Child()
     go_back = GtkTemplate.Child()
     start_screen = GtkTemplate.Child()
-    all_location_list = GtkTemplate.Child()
     header_bar = GtkTemplate.Child()
     sidebar = GtkTemplate.Child()
     scrolled_start_screen = GtkTemplate.Child()
     spinner = Gtk.Spinner()
+    application_list = GtkTemplate.Child()
+    audio_list = GtkTemplate.Child()
+    font_list = GtkTemplate.Child()
+    image_list = GtkTemplate.Child()
+    text_list = GtkTemplate.Child()
+    video_list = GtkTemplate.Child()
+    other_list = GtkTemplate.Child()
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
 
-    # test function for threading
+    # files function separated, for threading
+    
     def print_mimes(self, directory):
-        files = []
-        for entry in os.scandir(directory):
-            if entry.is_file() and entry.name.startswith('.') == False:
-                #TODO move files to different categories
-                files.append(entry)
+        # instantiate Gio directory
+
+        Gio_directory = Gio.File.new_for_path(directory).enumerate_children("*", Gio.FileQueryInfoFlags(1), None)
+
+        # loop through FileInfo objects
+        for entry in Gio_directory:
+
+            # print file name for debugging purposes
+            print(entry.get_name())
+            mimetype = entry.get_content_type()
+            first_mimetype = mimetype.split("/")[0]
+            name = entry.get_name()
+
+            # hide folders, hidden files and desktop files
+            if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False:
                 row = Gtk.Builder()
-                print(magic.from_file(entry.path, mime=True))
-                #print(str(entry.path)+" is "+str(mimetypes.guess_type(entry.name,strict=False)[0]))
+                # print mimetype for debugging purposes
+                print(mimetype)
+                # add GtkListBoxRow for each file in respective stack/category
                 row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
                 file_row = row.get_object("file_row")
                 filename_label = row.get_object("filename_label")
-                filename_label.set_text(entry.name)
-                GLib.idle_add(self.all_location_list.add, file_row)
-        print(len(files))
+                filename_label.set_text(entry.get_name())
+                #TODO if is application, use Nautilus table and Gnome archive to move to document/archive/other categories
+                try:
+                    GLib.idle_add(eval("self."+first_mimetype+"_list").add, file_row)
+                except:
+                    print(mimetype)
+                    GLib.idle_add(self.other_list.add, file_row)
+        Gio_directory.close()
+        # Hide the spinner from start screen
         GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
+        GLib.idle_add(self.spinner.destroy)
 
     # Back Button
 
@@ -78,15 +102,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
         # if is folded (mobile mode) and leaflet model is 2nd (on content), then make child 1 (go to sidebar). otherwise actual back to startscreen
         if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
-            # make the child 1
             self.stack_2.set_visible_child(self.sidebar)
         else:
             #TODO map this to Alt+left keyboard shortcut
             # hide the back button and go to start screen
-            #TODO if child visible is File Sorting, then go back to page, otherwise start screen
-            #self.spinner.destroy()
             self.go_back.hide()
-            self.spinner.destroy()
             self.header_bar.set_subtitle("")
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
@@ -109,19 +129,20 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
         dialog.run()
         dialog.destroy()
+
     def sidebar_clicked(self, widget, eventbutton):
         self.stack_2.set_visible_child(widget.get_stack())
 
     # When any location is clicked on homescreen
 
     def row_activated(self, widget, row):
-        
+        #TODO loop and delete all listboxrows
         # loop and delete all previous file ListBoxRows
 
-        children = self.all_location_list.get_children()
-        children_length = len(children)
-        for entry in range (0, children_length):
-            self.all_location_list.remove(children[entry])
+        #children = self.all_location_list.get_children()
+        #children_length = len(children)
+        #for entry in range (0, children_length):
+        #    self.all_location_list.remove(children[entry])
 
         row_index = row.get_index()
 
