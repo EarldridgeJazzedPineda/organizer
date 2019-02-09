@@ -21,6 +21,112 @@ import os
 import threading
 import time
 
+# dict mapping the special categories for "application" mimetype files
+# inspired by Nautilus, Gnome Autoar, and Calibre's tables
+# https://gitlab.gnome.org/GNOME/nautilus/blob/master/src/nautilus-mime-actions.c#L91
+# https://github.com/GNOME/gnome-autoar/blob/master/gnome-autoar/autoar-mime-types.c
+# https://github.com/kovidgoyal/calibre/blob/master/resources/calibre-mimetypes.xml
+application = { # DOCUMENTS
+                "rtf": "text",
+                "msword": "text",
+                "vnd.sun.xml.writer": "text",
+                "vnd.sun.xml.writer.global": "text",
+                "vnd.sun.xml.writer.template": "text",
+                "vnd.oasis.opendocument.text": "text",
+                "vnd.oasis.opendocument.text-template": "text",
+                "x-abiword": "text",
+                "x-applix-word": "text",
+                "x-mswrite": "text",
+                "docbook+xml": "text",
+                "x-kword": "text",
+                "x-kword-crypt": "text",
+                "x-lyx": "text",
+                "vnd.openxmlformats-officedocument.wordprocessingml.document": "text",
+                "pdf": "text",
+                "postscript": "text",
+                "x-dvi": "text",
+
+                # ARCHIVES
+                "x-7z-compressed": "archives",
+                "x-7z-compressed-tar": "archives",
+                "x-bzip": "archives",
+                "x-bzip-compressed-tar": "archives",
+                "x-compress": "archives",
+                "x-compressed-tar": "archives",
+                "x-cpio": "archives",
+                "x-gzip": "archives",
+                "x-lha": "archives",
+                "x-lzip": "archives",
+                "x-lzip-compressed-tar": "archives",
+                "x-lzma": "archives",
+                "x-lzma-compressed-tar": "archives",
+                "x-tar": "archives",
+                "x-tarz": "archives",
+                "x-xar": "archives",
+                "x-xz": "archives",
+                "x-xz-compressed-tar": "archives",
+                "zip": "archives",
+                "gzip": "archives",
+                "bzip2": "archives",
+                "vnd.rar": "archives",
+
+                # ILLUSTRATION
+                "illustrator": "illustration",
+                "vnd.corel-draw": "illustration",
+                "vnd.stardivision.draw": "illustration",
+                "vnd.oasis.opendocument.graphics": "illustration",
+                "x-dia-diagram": "illustration",
+                "x-karbon": "illustration",
+                "x-killustrator": "illustration",
+                "x-kivio": "illustration",
+                "x-kontour": "illustration",
+                "x-wpg": "illustration",
+
+                # MUSIC
+                "ogg" : "audio",
+
+                # IMAGES
+                "vnd.oasis.opendocument.image": "image",
+                "x-krita": "image",
+
+                # PRESENTATIONS
+                "vnd.ms-powerpoint": "presentations",
+                "vnd.sun.xml.impress": "presentations",
+                "vnd.oasis.opendocument.presentation": "presentations",
+                "x-magicpoint": "presentations",
+                "x-kpresenter": "presentations",
+                "vnd.openxmlformats-officedocument.presentationml.presentation": "presentations",
+
+                # SPREADSHEETS
+                "vnd.lotus-1-2-3": "spreadsheets",
+                "vnd.ms-excel": "spreadsheets",
+                "vnd.stardivision.calc": "spreadsheets",
+                "vnd.sun.xml.calc": "spreadsheets",
+                "vnd.oasis.opendocument.spreadsheet": "spreadsheets",
+                "x-applix-spreadsheet": "spreadsheets",
+                "x-gnumeric": "spreadsheets",
+                "x-kspread": "spreadsheets",
+                "x-kspread-crypt": "spreadsheets",
+                "x-quattropro": "spreadsheets",
+                "x-sc": "spreadsheets",
+                "x-siag": "spreadsheets",
+                "vnd.openxmlformats-officedocument.spreadsheetml.sheet": "spreadsheets",
+
+                # EBOOKS
+                "x-sony-bbeb": "ebooks",
+                "epub+zip": "ebooks",
+                "text/lrs": "ebooks",
+                "x-mobipocket-ebook": "ebooks",
+                "x-palm-database": "ebooks",
+                "x-topaz-ebook": "ebooks",
+                "x-kindle-application": "ebooks",
+                "x-mobipocket-subscription": "ebooks",
+                "x-mobipocket-ebook": "ebooks",
+                "x-mobipocket-subscription-magazine": "ebooks",
+                "x-mobi8-ebook": "ebooks"
+                #TODO add code category
+                }
+
 # array mapping each xdg folder with the GtkList options 1-6
 folders = [
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP),
@@ -52,12 +158,22 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     image_list = GtkTemplate.Child()
     text_list = GtkTemplate.Child()
     video_list = GtkTemplate.Child()
-    other_list = GtkTemplate.Child()
+    archives_list = GtkTemplate.Child()
+    illustrations_list = GtkTemplate.Child()
+    presentations_list = GtkTemplate.Child()
+    spreadsheets_list = GtkTemplate.Child()
+    ebooks_list = GtkTemplate.Child()
+    #TODO open popover with all ListBox's, see how Lollypop does it
+    #file_popover = Gtk.Builder().add_objects_from_resource("/avi/wad/Organizer/window.ui", "file_popover")
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+
+    # testing 123
+    def activated (self, widget, row):
+        file_popover()
 
     # files function separated, for threading
     
@@ -69,29 +185,31 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         # loop through FileInfo objects
         for entry in Gio_directory:
 
-            # print file name for debugging purposes
-            print(entry.get_name())
             mimetype = entry.get_content_type()
             first_mimetype = mimetype.split("/")[0]
+            second_mimetype = mimetype.split("/")[1]
             name = entry.get_name()
 
             # hide folders, hidden files and desktop files
-            if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False:
+            if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False and name.endswith('~') == False:
                 row = Gtk.Builder()
-                # print mimetype for debugging purposes
-                print(mimetype)
                 # add GtkListBoxRow for each file in respective stack/category
+                #TODO get popover for GtkListBox to move files to different categories, etc
                 row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
                 file_row = row.get_object("file_row")
                 filename_label = row.get_object("filename_label")
                 filename_label.set_text(entry.get_name())
-                #TODO if is application, use Nautilus table and Gnome archive to move to document/archive/other categories
-                try:
+                #TODO add to arrays and add that to list for sorting + future editing (moving)
+                if first_mimetype != "application":
                     GLib.idle_add(eval("self."+first_mimetype+"_list").add, file_row)
-                except:
-                    print(mimetype)
-                    GLib.idle_add(self.other_list.add, file_row)
+                else:
+                    application_mimetype = application.get(second_mimetype)
+                    if application_mimetype:
+                        GLib.idle_add(eval("self."+application_mimetype+"_list").add, file_row)
+                    else:
+                        GLib.idle_add(eval("self."+first_mimetype+"_list").add, file_row)
         Gio_directory.close()
+        
         # Hide the spinner from start screen
         GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
         GLib.idle_add(self.spinner.destroy)
@@ -111,6 +229,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
     # About Menu
+    # TODO make about menu grey out the background app, see how Lollypop does it
 
     def on_about_button_clicked(self, button):
         dialog = Gtk.AboutDialog()
@@ -174,7 +293,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.spinner.set_visible(True)
             self.spinner.props.active = True
             self.spinner.start()
-            #TODO make this work before the file intensive operation
+
+            # separate thread to not hang up the entire GUI, and to render the spinner at the same time
             thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
             thread_testing.start()
 
@@ -183,5 +303,3 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
             # Unhide the back button
             self.go_back.show()
-            #self.print_mimes(directory)
-            #self.gtk_stack.set_visible_child(self.stack_2)
