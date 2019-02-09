@@ -123,6 +123,8 @@ application_mimetypes = { # DOCUMENTS
                 "x-mobi8-ebook": "ebooks"
                 }
 
+category_names = ["archives", "text", "ebooks", "font", "illustrations", "image", "audio", "application", "presentations", "spreadsheets", "video"]
+
 # array mapping each xdg folder with the GtkList options 1-6
 folders = [
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP),
@@ -142,10 +144,12 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
     gtk_stack = GtkTemplate.Child()
     stack_2 = GtkTemplate.Child()
+    file_sorting = GtkTemplate.Child()
     go_back = GtkTemplate.Child()
     start_screen = GtkTemplate.Child()
     header_bar = GtkTemplate.Child()
     sidebar = GtkTemplate.Child()
+    sidebar_scrolled_window = GtkTemplate.Child()
     scrolled_start_screen = GtkTemplate.Child()
     spinner = Gtk.Spinner()
 
@@ -161,6 +165,19 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     spreadsheets_list = GtkTemplate.Child()
     text_list = GtkTemplate.Child()
     video_list = GtkTemplate.Child()
+
+    # all columns
+    application_column = GtkTemplate.Child()
+    archives_column = GtkTemplate.Child()
+    audio_column = GtkTemplate.Child()
+    ebooks_column = GtkTemplate.Child()
+    font_column = GtkTemplate.Child()
+    illustrations_column = GtkTemplate.Child()
+    image_column = GtkTemplate.Child()
+    presentations_column = GtkTemplate.Child()
+    spreadsheets_column = GtkTemplate.Child()
+    text_column = GtkTemplate.Child()
+    video_column = GtkTemplate.Child()
     
     __gtype_name__ = 'OrganizerWindow'
 
@@ -179,7 +196,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         # set arrays for file lists
         archives = []
         ebooks = []
-        fonts = []
+        font = []
         illustrations = []
         image = []
         audio = []
@@ -211,11 +228,13 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 else:
                     eval(first_mimetype).append(name)
         Gio_directory.close()
-        categories = [archives, ebooks, fonts, illustrations, image, audio, application, presentations, spreadsheets, text, video]
-        category_names = ["archives", "ebooks", "fonts", "illustrations", "image", "audio", "application", "presentations", "spreadsheets", "text", "video"]
+        categories = [archives, text, ebooks, font, illustrations, image, audio, application, presentations, spreadsheets, video]
         for index, category in enumerate(categories):
             category = sorted(category, key=str.lower)
             print(category)
+            if not len(category):
+                self.sidebar.get_row_at_index(index).set_visible(False)
+                # set the respective row to visible false
             for entry in category:
                 row = Gtk.Builder()
                 row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
@@ -223,6 +242,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 filename_label = row.get_object("filename_label")
                 filename_label.set_text(entry)
                 GLib.idle_add(eval("self."+category_names[index]+"_list").add, file_row)
+        first_proper_category = next((i for i, x in enumerate(categories) if x), None)
+        self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
+        self.sidebar.select_row(self.sidebar.get_row_at_index(first_proper_category))
+        #print(next((i for i, x in enumerate(categories) if x), None))
         
         # Hide the spinner from start screen
         GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
@@ -233,7 +256,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
         # if is folded on content then go to sidebar, otherwise actual back to startscreen
         if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
-            self.stack_2.set_visible_child(self.sidebar)
+            self.stack_2.set_visible_child(self.sidebar_scrolled_window)
         else:
             # hide the back button and go to start screen
             self.go_back.hide()
@@ -241,7 +264,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
     # About Menu
-
     def on_about_button_clicked(self, button):
         dialog = Gtk.AboutDialog()
         dialog.set_modal(True)
@@ -258,11 +280,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.run()
         dialog.destroy()
 
-    def sidebar_clicked(self, widget, eventbutton):
-        self.stack_2.set_visible_child(widget.get_stack())
+    def category_row_clicked(self, widget, row):
+        self.file_sorting.set_visible_child(eval("self."+category_names[row.get_index()]+"_column"))
+        self.stack_2.set_visible_child(self.file_sorting)
 
     # When any location is clicked on homescreen
-
     def row_activated(self, widget, row):
         # loop and delete all previous all ListBoxRows
         list_of_listboxes = [self.application_list,self.archives_list,
@@ -273,24 +295,26 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             children_length = len(children)
             for entry in range (0, children_length):
                 current_location_list.remove(children[entry])
+        for sidebar_row in self.sidebar.get_children():
+            sidebar_row.set_visible(True)
 
 
         row_index = row.get_index()
 
         # Open filechooser if "other" option clicked
-        
         if row_index == 7:
             directory_chooser = \
                 Gtk.FileChooserDialog('Please choose a folder', None,
                     Gtk.FileChooserAction.SELECT_FOLDER,
                     (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select'
                     , Gtk.ResponseType.OK))
+            directory_chooser.set_transient_for(self)
+            directory_chooser.set_modal = True
             response = directory_chooser.run()
             if response == Gtk.ResponseType.OK:
                 response_type = True
             else:
                 response_type = False
-            directory_chooser.set_modal = True
 
             # Get foldername and then close the filechooser
             directory = directory_chooser.get_filename()
