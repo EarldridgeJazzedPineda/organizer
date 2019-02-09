@@ -16,10 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import Gtk, GLib, Handy, Gio
 from .gi_composites import GtkTemplate
-import sys
-import os
 import threading
-import time
 
 # dict mapping the special categories for "application" mimetype files
 # inspired by Nautilus, Gnome Autoar, and Calibre's tables
@@ -135,7 +132,7 @@ folders = [
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC),
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES),
     GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS),
-    os.path.expanduser('~'),
+    GLib.get_home_dir()
     ]
 # to initiate the custom libhandy widgets
 Handy.init()
@@ -231,7 +228,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
     # About Menu
-    # TODO make about menu grey out the background app, see how Lollypop does it
 
     def on_about_button_clicked(self, button):
         dialog = Gtk.AboutDialog()
@@ -302,7 +298,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             thread_testing.start()
 
             # Change title to folder
-            self.header_bar.set_subtitle(os.path.basename(directory))
+            self.header_bar.set_subtitle(directory.split('/').pop())
 
             # Unhide the back button
             self.go_back.show()
