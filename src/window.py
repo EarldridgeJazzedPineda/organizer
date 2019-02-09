@@ -23,7 +23,7 @@ import threading
 # https://gitlab.gnome.org/GNOME/nautilus/blob/master/src/nautilus-mime-actions.c#L91
 # https://github.com/GNOME/gnome-autoar/blob/master/gnome-autoar/autoar-mime-types.c
 # https://github.com/kovidgoyal/calibre/blob/master/resources/calibre-mimetypes.xml
-application = { # DOCUMENTS
+application_mimetypes = { # DOCUMENTS
                 "rtf": "text",
                 "msword": "text",
                 "vnd.sun.xml.writer": "text",
@@ -121,7 +121,6 @@ application = { # DOCUMENTS
                 "x-mobipocket-ebook": "ebooks",
                 "x-mobipocket-subscription-magazine": "ebooks",
                 "x-mobi8-ebook": "ebooks"
-                #TODO add code category
                 }
 
 # array mapping each xdg folder with the GtkList options 1-6
@@ -162,8 +161,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     spreadsheets_list = GtkTemplate.Child()
     text_list = GtkTemplate.Child()
     video_list = GtkTemplate.Child()
-    #TODO open popover with all ListBox's, see how Lollypop does it
-    #file_popover = Gtk.Builder().add_objects_from_resource("/avi/wad/Organizer/window.ui", "file_popover")
+    
     __gtype_name__ = 'OrganizerWindow'
 
     def __init__(self, **kwargs):
@@ -177,8 +175,21 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     # files function separated, for threading
     
     def print_mimes(self, directory):
-        # instantiate Gio directory
 
+        # set arrays for file lists
+        archives = []
+        ebooks = []
+        fonts = []
+        illustrations = []
+        image = []
+        audio = []
+        application = []
+        presentations = []
+        spreadsheets = []
+        text = []
+        video = []
+
+        # instantiate Gio directory
         Gio_directory = Gio.File.new_for_path(directory).enumerate_children("*", Gio.FileQueryInfoFlags(1), None)
 
         # loop through FileInfo objects
@@ -192,37 +203,38 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
             # hide folders, hidden files and desktop files
             if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False and name.endswith('~') == False:
+                application_mimetype = application_mimetypes.get(second_mimetype)
+                if first_mimetype == "application" and application_mimetype:
+                    if application_mimetype:
+                        eval(application_mimetype).append(name)
+
+                else:
+                    eval(first_mimetype).append(name)
+        Gio_directory.close()
+        categories = [archives, ebooks, fonts, illustrations, image, audio, application, presentations, spreadsheets, text, video]
+        category_names = ["archives", "ebooks", "fonts", "illustrations", "image", "audio", "application", "presentations", "spreadsheets", "text", "video"]
+        for index, category in enumerate(categories):
+            category = sorted(category, key=str.lower)
+            print(category)
+            for entry in category:
                 row = Gtk.Builder()
-                # add GtkListBoxRow for each file in respective stack/category
-                #TODO get popover for GtkListBox to move files to different categories, etc
                 row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
                 file_row = row.get_object("file_row")
                 filename_label = row.get_object("filename_label")
-                filename_label.set_text(entry.get_name())
-                #TODO add to arrays and add that to list for sorting + future editing (moving)
-                if first_mimetype != "application":
-                    GLib.idle_add(eval("self."+first_mimetype+"_list").add, file_row)
-                else:
-                    application_mimetype = application.get(second_mimetype)
-                    if application_mimetype:
-                        GLib.idle_add(eval("self."+application_mimetype+"_list").add, file_row)
-                    else:
-                        GLib.idle_add(eval("self."+first_mimetype+"_list").add, file_row)
-        Gio_directory.close()
+                filename_label.set_text(entry)
+                GLib.idle_add(eval("self."+category_names[index]+"_list").add, file_row)
         
         # Hide the spinner from start screen
         GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
         GLib.idle_add(self.spinner.destroy)
 
     # Back Button
-
     def go_back_clicked_cb(self, button):
 
-        # if is folded (mobile mode) and leaflet model is 2nd (on content), then make child 1 (go to sidebar). otherwise actual back to startscreen
+        # if is folded on content then go to sidebar, otherwise actual back to startscreen
         if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
             self.stack_2.set_visible_child(self.sidebar)
         else:
-            #TODO map this to Alt+left keyboard shortcut
             # hide the back button and go to start screen
             self.go_back.hide()
             self.header_bar.set_subtitle("")
@@ -235,9 +247,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_modal(True)
         dialog.set_authors(['Avi Wadhwa'])
         dialog.set_artists(["lol there's no artwork"])
-
-        # TODO: get icon
-
         dialog.set_logo_icon_name(None)
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
@@ -264,6 +273,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             children_length = len(children)
             for entry in range (0, children_length):
                 current_location_list.remove(children[entry])
+
 
         row_index = row.get_index()
 
