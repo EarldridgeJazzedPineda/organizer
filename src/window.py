@@ -152,17 +152,19 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     sidebar = GtkTemplate.Child()
     scrolled_start_screen = GtkTemplate.Child()
     spinner = Gtk.Spinner()
+
+    # all lists
     application_list = GtkTemplate.Child()
-    audio_list = GtkTemplate.Child()
-    font_list = GtkTemplate.Child()
-    image_list = GtkTemplate.Child()
-    text_list = GtkTemplate.Child()
-    video_list = GtkTemplate.Child()
     archives_list = GtkTemplate.Child()
+    audio_list = GtkTemplate.Child()
+    ebooks_list = GtkTemplate.Child()
+    font_list = GtkTemplate.Child()
     illustrations_list = GtkTemplate.Child()
+    image_list = GtkTemplate.Child()
     presentations_list = GtkTemplate.Child()
     spreadsheets_list = GtkTemplate.Child()
-    ebooks_list = GtkTemplate.Child()
+    text_list = GtkTemplate.Child()
+    video_list = GtkTemplate.Child()
     #TODO open popover with all ListBox's, see how Lollypop does it
     #file_popover = Gtk.Builder().add_objects_from_resource("/avi/wad/Organizer/window.ui", "file_popover")
     __gtype_name__ = 'OrganizerWindow'
@@ -241,11 +243,12 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
         dialog.set_logo_icon_name(None)
         dialog.set_license_type(Gtk.License.GPL_3_0)
-        dialog.set_program_name(_('Organizer'))
+        dialog.set_program_name(('Organizer'))
         dialog.set_translator_credits(_('translator-credits'))
         dialog.set_version('0.1')
         dialog.set_comments(_('Organizes your files'))
         dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
+        dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()
 
