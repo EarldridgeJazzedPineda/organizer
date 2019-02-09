@@ -188,6 +188,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             first_mimetype = mimetype.split("/")[0]
             second_mimetype = mimetype.split("/")[1]
             name = entry.get_name()
+            print(mimetype)
 
             # hide folders, hidden files and desktop files
             if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False and name.endswith('~') == False:
@@ -254,13 +255,15 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     # When any location is clicked on homescreen
 
     def row_activated(self, widget, row):
-        #TODO loop and delete all listboxrows
-        # loop and delete all previous file ListBoxRows
-
-        #children = self.all_location_list.get_children()
-        #children_length = len(children)
-        #for entry in range (0, children_length):
-        #    self.all_location_list.remove(children[entry])
+        # loop and delete all previous all ListBoxRows
+        list_of_listboxes = [self.application_list,self.archives_list,
+        self.audio_list,self.ebooks_list,self.font_list,self.illustrations_list,
+        self.image_list,self.presentations_list,self.spreadsheets_list,self.text_list,self.video_list]
+        for current_location_list in list_of_listboxes:
+            children = current_location_list.get_children()
+            children_length = len(children)
+            for entry in range (0, children_length):
+                current_location_list.remove(children[entry])
 
         row_index = row.get_index()
 
