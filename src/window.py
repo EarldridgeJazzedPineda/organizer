@@ -17,8 +17,10 @@
 from gi.repository import Gtk, GLib, Handy, Gio
 from .gi_composites import GtkTemplate
 import threading
+import shutil
 # until I realize why GLib permissions are messed up
 import os
+from os import path
 
 # dict mapping the special categories for "application" mimetype files
 # inspired by Nautilus, Gnome Autoar, and Calibre's tables
@@ -143,7 +145,7 @@ Handy.init()
 class OrganizerWindow(Gtk.ApplicationWindow):
 
     # initializing widgets to be used later
-
+    subtitle = GtkTemplate.Child()
     gtk_stack = GtkTemplate.Child()
     stack_2 = GtkTemplate.Child()
     file_sorting = GtkTemplate.Child()
@@ -154,6 +156,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     sidebar_scrolled_window = GtkTemplate.Child()
     scrolled_start_screen = GtkTemplate.Child()
     spinner = Gtk.Spinner()
+    busy_title = GtkTemplate.Child()
 
     # all lists
     application_list = GtkTemplate.Child()
@@ -200,8 +203,30 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
+    def does_exist(self, file, directory, index):
+        if not path.exists(directory+"/"+file):
+            return file
+        original_file = file
+        filename, file_extension = os.path.splitext(file)
+        filename = filename+" ("+str(index+1)+")"
+        file=filename+file_extension
+        return self.does_exist(file, directory, index+1)
+
+    def move_files_threading(self, directory, newdirectory, files):
+        for file in files:
+            new_file = self.does_exist(file, directory, 0)
+            print(new_file)
+        #self.busy_title.set_visible(False)
+        #self.busy_title.props_active = False
+        #GLib.idle_add(self.busy_title.stop())
+
     def move_files(self, directory, newdirectory, files):
         print("TODO: move "+str(files[0])+" to "+str(newdirectory)+" from "+str(directory))
+        self.busy_title.set_visible(True)
+        self.busy_title.props_active= True
+        self.busy_title.start()
+        move_thread = threading.Thread(target=self.move_files_threading, args=(directory, newdirectory, files, ))
+        move_thread.start()
 
     # files function separated, for threading
     def print_mimes(self, directory):
@@ -280,7 +305,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         else:
             # hide the back button and go to start screen
             self.go_back.hide()
-            self.header_bar.set_subtitle("")
+            self.subtitle.set_text("")
+            self.subtitle.set_visible(False)
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
     # About Menu
@@ -354,7 +380,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
             thread_testing.start()
             # Change title to folder
-            self.header_bar.set_subtitle(directory_last_name)
+            self.subtitle.set_text(directory_last_name)
+            self.subtitle.set_visible(True)
             # Unhide the back button
             self.go_back.show()
     def archives_move_clicked(self, button):
