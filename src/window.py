@@ -200,8 +200,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
-    def move_files(self, directory, files):
-        print("TODO: move "+str(files[0])+" to "+str(directory))
+    def move_files(self, directory, newdirectory, files):
+        print("TODO: move "+str(files[0])+" to "+str(newdirectory)+" from "+str(directory))
 
     # files function separated, for threading
     def print_mimes(self, directory):
@@ -358,140 +358,274 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # Unhide the back button
             self.go_back.show()
     def archives_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.archive_location_option.get_active())
         if self.archive_location_option.get_active():
-            print("TODO")
+            archive_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Archive files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            archive_directory_chooser.set_transient_for(self)
+            archive_directory_chooser.set_modal = True
+            response = archive_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = archive_directory_chooser.get_filename()
+            archive_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Archives"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, archives)
+        if response_type:
+            self.move_files(directory, newdirectory, archives)
     def ebooks_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.ebooks_location_option.get_active())
         if self.ebooks_location_option.get_active():
-            print("TODO")
+            ebooks_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Ebook files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            ebooks_directory_chooser.set_transient_for(self)
+            ebooks_directory_chooser.set_modal = True
+            response = ebooks_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = ebooks_directory_chooser.get_filename()
+            ebooks_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Ebooks"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, ebooks)
+        if response_type:
+            self.move_files(directory, newdirectory, ebooks)
     def font_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.font_location_option.get_active())
         if self.font_location_option.get_active():
-            print("TODO")
+            font_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Font files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            font_directory_chooser.set_transient_for(self)
+            font_directory_chooser.set_modal = True
+            response = font_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = font_directory_chooser.get_filename()
+            font_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Fonts"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, font)
+        if response_type:
+            self.move_files(directory, newdirectory, font)
     def illustrations_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.illustrations_location_option.get_active())
         if self.illustrations_location_option.get_active():
-            print("TODO")
+            illustrations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Illustration files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            illustrations_directory_chooser.set_transient_for(self)
+            illustrations_directory_chooser.set_modal = True
+            response = illustrations_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = illustrations_directory_chooser.get_filename()
+            illustrations_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Illustrations"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, illustrations)
+        if response_type:
+            self.move_files(directory, newdirectory, illustrations)
     def application_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.application_location_option.get_active())
         if self.application_location_option.get_active():
-            print("TODO")
+            application_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Other files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            application_directory_chooser.set_transient_for(self)
+            application_directory_chooser.set_modal = True
+            response = application_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = application_directory_chooser.get_filename()
+            application_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Other"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, application)
+        if response_type:
+            self.move_files(directory, newdirectory, application)
 
     def presentations_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.presentations_location_option.get_active())
         if self.presentations_location_option.get_active():
-            print("TODO")
+            presentations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Presentation files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            presentation_directory_chooser.set_transient_for(self)
+            presentation_directory_chooser.set_modal = True
+            response = presentation_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = presentation_directory_chooser.get_filename()
+            presentation_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Presentations"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, presentations)
+        if response_type:
+            self.move_files(directory, newdirectory, presentations)
 
     def spreadsheets_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.spreadsheets_location_option.get_active())
         if self.spreadsheets_location_option.get_active():
-            print("TODO")
+            spreadsheets_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Spreadsheet files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            spreadsheets_directory_chooser.set_transient_for(self)
+            spreadsheets_directory_chooser.set_modal = True
+            response = spreadsheets_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = spreadsheets_directory_chooser.get_filename()
+            spreadsheets_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Spreadsheets"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, spreadsheets)
+        if response_type:
+            self.move_files(directory, newdirectory, spreadsheets)
 
     def audio_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.audio_location_option.get_active())
         if self.audio_location_option.get_active():
-            print("TODO")
+            audio_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Music files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            audio_directory_chooser.set_transient_for(self)
+            audio_directory_chooser.set_modal = True
+            response = audio_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = audio_directory_chooser.get_filename()
+            audio_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Music"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, audio)
+        if response_type:
+            self.move_files(directory, newdirectory, audio)
 
     def image_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.image_location_option.get_active())
         if self.image_location_option.get_active():
-            print("TODO")
+            image_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Image files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            image_directory_chooser.set_transient_for(self)
+            image_directory_chooser.set_modal = True
+            response = image_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = image_directory_chooser.get_filename()
+            image_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Images"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, image)
+        if response_type:
+            self.move_files(directory, newdirectory, image)
 
     def text_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.text_location_option.get_active())
         if self.text_location_option.get_active():
-            print("TODO")
+            text_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Document files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            text_directory_chooser.set_transient_for(self)
+            text_directory_chooser.set_modal = True
+            response = text_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = text_directory_chooser.get_filename()
+            text_directory_chooser.destroy()
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Documents"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, text)
+        if response_type:
+            self.move_files(directory, newdirectory, text)
 
     def video_move_clicked(self, button):
-        print("MOVE IS CLICKED")
         print(self.video_location_option.get_active())
         if self.video_location_option.get_active():
-            print("TODO")
+            video_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Video files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
+            video_directory_chooser.set_transient_for(self)
+            video_directory_chooser.set_modal = True
+            response = video_directory_chooser.run()
+            if response == Gtk.ResponseType.OK:
+                response_type = True
+            else:
+                response_type = False
+
+            # Get foldername and then close the filechooser
+            newdirectory = video_directory_chooser.get_filename()
+            video_directory_chooser.destroy()
+            print(newdirectory)
+            
             # get filechooser, use that to move files
         else:
+            response_type = True
             newdirectory = directory+"/Videos"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
             #GLib.mkdir_with_parents(newdirectory,755)
-            self.move_files(newdirectory, video)
+        if response_type:
+            self.move_files(directory, newdirectory, video)
