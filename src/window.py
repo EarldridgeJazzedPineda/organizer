@@ -17,6 +17,8 @@
 from gi.repository import Gtk, GLib, Handy, Gio
 from .gi_composites import GtkTemplate
 import threading
+# until I realize why GLib permissions are messed up
+import os
 
 # dict mapping the special categories for "application" mimetype files
 # inspired by Nautilus, Gnome Autoar, and Calibre's tables
@@ -178,6 +180,19 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     spreadsheets_column = GtkTemplate.Child()
     text_column = GtkTemplate.Child()
     video_column = GtkTemplate.Child()
+
+    # all category location options
+    archive_location_option = GtkTemplate.Child()
+    ebooks_location_option = GtkTemplate.Child()
+    font_location_option = GtkTemplate.Child()
+    illustrations_location_option = GtkTemplate.Child()
+    application_location_option = GtkTemplate.Child()
+    presentations_location_option = GtkTemplate.Child()
+    spreadsheets_location_option = GtkTemplate.Child()
+    audio_location_option = GtkTemplate.Child()
+    image_location_option = GtkTemplate.Child()
+    text_location_option = GtkTemplate.Child()
+    video_location_option = GtkTemplate.Child()
     
     __gtype_name__ = 'OrganizerWindow'
 
@@ -185,15 +200,23 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
-    # testing 123
-    def activated (self, widget, row):
-        file_popover()
+    def move_files(self, directory, files):
+        print("TODO: move "+str(files[0])+" to "+str(directory))
 
     # files function separated, for threading
-    
     def print_mimes(self, directory):
-
         # set arrays for file lists
+        global archives
+        global ebooks
+        global font
+        global illustrations
+        global image
+        global audio
+        global application
+        global presentations
+        global spreadsheets
+        global text
+        global video
         archives = []
         ebooks = []
         font = []
@@ -216,7 +239,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             first_mimetype = mimetype.split("/")[0]
             second_mimetype = mimetype.split("/")[1]
             name = entry.get_name()
-            print(mimetype)
 
             # hide folders, hidden files and desktop files
             if first_mimetype != "inode" and name.startswith('.') == False and name.endswith('.desktop') == False and name.endswith('~') == False:
@@ -231,7 +253,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         categories = [archives, text, ebooks, font, illustrations, image, audio, application, presentations, spreadsheets, video]
         for index, category in enumerate(categories):
             category = sorted(category, key=str.lower)
-            print(category)
             if not len(category):
                 self.sidebar.get_row_at_index(index).set_visible(False)
                 # set the respective row to visible false
@@ -245,7 +266,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         first_proper_category = next((i for i, x in enumerate(categories) if x), None)
         self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
         self.sidebar.select_row(self.sidebar.get_row_at_index(first_proper_category))
-        #print(next((i for i, x in enumerate(categories) if x), None))
         
         # Hide the spinner from start screen
         GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
@@ -300,6 +320,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
 
 
         row_index = row.get_index()
+        global directory
 
         # Open filechooser if "other" option clicked
         if row_index == 7:
@@ -320,7 +341,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             directory = directory_chooser.get_filename()
             directory_chooser.destroy()
         else:
-
             # Get foldername from respective folder array index
             directory = folders[row_index]
             response_type = True
@@ -329,13 +349,149 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.spinner.set_visible(True)
             self.spinner.props.active = True
             self.spinner.start()
-
+            directory_last_name = directory.split('/').pop()
             # separate thread to not hang up the entire GUI, and to render the spinner at the same time
             thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
             thread_testing.start()
-
             # Change title to folder
-            self.header_bar.set_subtitle(directory.split('/').pop())
-
+            self.header_bar.set_subtitle(directory_last_name)
             # Unhide the back button
             self.go_back.show()
+    def archives_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.archive_location_option.get_active())
+        if self.archive_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Archives"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, archives)
+    def ebooks_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.ebooks_location_option.get_active())
+        if self.ebooks_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Ebooks"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, ebooks)
+    def font_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.font_location_option.get_active())
+        if self.font_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Fonts"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, font)
+    def illustrations_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.illustrations_location_option.get_active())
+        if self.illustrations_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Illustrations"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, illustrations)
+    def application_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.application_location_option.get_active())
+        if self.application_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Other"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, application)
+
+    def presentations_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.presentations_location_option.get_active())
+        if self.presentations_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Presentations"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, presentations)
+
+    def spreadsheets_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.spreadsheets_location_option.get_active())
+        if self.spreadsheets_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Spreadsheets"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, spreadsheets)
+
+    def audio_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.audio_location_option.get_active())
+        if self.audio_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Music"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, audio)
+
+    def image_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.image_location_option.get_active())
+        if self.image_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Images"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, image)
+
+    def text_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.text_location_option.get_active())
+        if self.text_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Documents"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, text)
+
+    def video_move_clicked(self, button):
+        print("MOVE IS CLICKED")
+        print(self.video_location_option.get_active())
+        if self.video_location_option.get_active():
+            print("TODO")
+            # get filechooser, use that to move files
+        else:
+            newdirectory = directory+"/Videos"
+            if not os.path.exists(newdirectory):
+                os.mkdir(newdirectory)
+            #GLib.mkdir_with_parents(newdirectory,755)
+            self.move_files(newdirectory, video)
