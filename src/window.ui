@@ -3,85 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="libhandy" version="0.0"/>
-  <object class="GtkPopoverMenu" id="audio_application_location">
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_start">5</property>
-        <property name="margin_end">5</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">5</property>
-        <child>
-          <object class="GtkRadioButton" id="audio_folder_option">
-            <property name="label" translatable="yes">Make a Music folder</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkRadioButton" id="audio_location_option">
-            <property name="label" translatable="yes">Other</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-            <property name="group">audio_folder_option</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="label" translatable="yes">Move</property>
-            <property name="width_request">115</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="halign">center</property>
-            <signal name="clicked" handler="audio_move_clicked" swapped="no"/>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="submenu">main</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-  </object>
   <object class="GtkPopoverMenu" id="choose_application_location">
     <property name="can_focus">False</property>
     <child>
@@ -224,6 +145,85 @@
             <property name="receives_default">True</property>
             <property name="halign">center</property>
             <signal name="clicked" handler="archives_move_clicked" swapped="no"/>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkPopoverMenu" id="choose_audio_location">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_start">5</property>
+        <property name="margin_end">5</property>
+        <property name="margin_top">10</property>
+        <property name="margin_bottom">10</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkRadioButton" id="audio_folder_option">
+            <property name="label" translatable="yes">Make a Music folder</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="audio_location_option">
+            <property name="label" translatable="yes">Other</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="draw_indicator">True</property>
+            <property name="group">audio_folder_option</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">Move</property>
+            <property name="width_request">115</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="halign">center</property>
+            <signal name="clicked" handler="audio_move_clicked" swapped="no"/>
             <style>
               <class name="suggested-action"/>
             </style>
@@ -479,7 +479,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkPopoverMenu" id="image_application_location">
+  <object class="GtkPopoverMenu" id="choose_image_location">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
@@ -558,35 +558,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkPopover" id="popover">
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_start">10</property>
-        <property name="margin_end">10</property>
-        <property name="margin_top">10</property>
-        <property name="margin_bottom">10</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkModelButton" id="about_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes">About</property>
-            <signal name="clicked" handler="on_about_button_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopoverMenu" id="presentations_application_location">
+  <object class="GtkPopoverMenu" id="choose_presentations_location">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
@@ -665,7 +637,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkPopoverMenu" id="spreadsheets_application_location">
+  <object class="GtkPopoverMenu" id="choose_spreadsheets_location">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
@@ -744,7 +716,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkPopoverMenu" id="text_application_location">
+  <object class="GtkPopoverMenu" id="choose_text_location">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
@@ -823,7 +795,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkPopoverMenu" id="video_application_location">
+  <object class="GtkPopoverMenu" id="choose_video_location">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
@@ -900,6 +872,34 @@
         <property name="submenu">main</property>
         <property name="position">1</property>
       </packing>
+    </child>
+  </object>
+  <object class="GtkPopover" id="popover">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_start">10</property>
+        <property name="margin_end">10</property>
+        <property name="margin_top">10</property>
+        <property name="margin_bottom">10</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="about_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">About</property>
+            <signal name="clicked" handler="on_about_button_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
     </child>
   </object>
   <template class="OrganizerWindow" parent="GtkApplicationWindow">
@@ -1396,6 +1396,7 @@
           <object class="HdyLeaflet" id="stack_2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="visible_child">sidebar</property>
             <property name="visible_child_name">sidebar</property>
             <property name="mode_transition_type">slide</property>
             <property name="child_transition_type">slide</property>
@@ -1417,7 +1418,7 @@
                         <property name="width_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <signal name="row-activated" handler="category_row_clicked" swapped="no"/>
+                        <signal name="row-selected" handler="category_row_clicked" swapped="no"/>
                         <child>
                           <object class="GtkListBoxRow">
                             <property name="height_request">50</property>
@@ -1628,6 +1629,8 @@
               <object class="GtkStack" id="file_sorting">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="transition_duration">100</property>
+                <property name="transition_type">crossfade</property>
                 <child>
                   <object class="HdyColumn" id="archives_column">
                     <property name="visible">True</property>
@@ -2251,7 +2254,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">image_application_location</property>
+                                <property name="popover">choose_image_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -2382,7 +2385,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">audio_application_location</property>
+                                <property name="popover">choose_audio_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -2644,7 +2647,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">presentations_application_location</property>
+                                <property name="popover">choose_presentations_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -2775,7 +2778,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">spreadsheets_application_location</property>
+                                <property name="popover">choose_spreadsheets_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -2906,7 +2909,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">text_application_location</property>
+                                <property name="popover">choose_text_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -3037,7 +3040,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">center</property>
-                                <property name="popover">video_application_location</property>
+                                <property name="popover">choose_video_location</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>

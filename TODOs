@@ -1,7 +1,10 @@
-map back button to Alt+Left
 make icon
-make a popover + function to move the files to different categories or remove them
+add appdata information for FlatHub
 make the move button work and move the files
 get progress bar for the same
 in app notification for when moving is done (or global notification if no focus)
+
+for later:
+make a popover + function to move the files to different categories or remove them
+map back button to Alt+Left
 add a code category

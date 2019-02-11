@@ -20,7 +20,7 @@ import threading
 import shutil
 # until I realize why GLib permissions are messed up
 import os
-from os import path
+from time import sleep
 
 # dict mapping the special categories for "application" mimetype files
 # inspired by Nautilus, Gnome Autoar, and Calibre's tables
@@ -157,6 +157,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     scrolled_start_screen = GtkTemplate.Child()
     spinner = Gtk.Spinner()
     busy_title = GtkTemplate.Child()
+    gio_application = Gio.Application.get_default
 
     # all lists
     application_list = GtkTemplate.Child()
@@ -204,28 +205,76 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         self.init_template()
 
     def does_exist(self, file, directory, index):
-        if not path.exists(directory+"/"+file):
-            return file
-        original_file = file
         filename, file_extension = os.path.splitext(file)
-        filename = filename+" ("+str(index+1)+")"
-        file=filename+file_extension
+        if index == 0:
+            duplicate_versioning = ""
+        else:
+            duplicate_versioning = " ("+str(index+1)+")"
+        if not os.path.exists(directory+"/"+filename+duplicate_versioning+file_extension):
+            file = filename+duplicate_versioning+file_extension
+            return file
         return self.does_exist(file, directory, index+1)
 
+    def change_the_rows(self,   new_row_index):
+        newer_row = self.sidebar.get_row_at_index(new_row_index)
+        self.sidebar.select_row(newer_row)
+        
     def move_files_threading(self, directory, newdirectory, files):
         for file in files:
-            new_file = self.does_exist(file, directory, 0)
-            print(new_file)
-        #self.busy_title.set_visible(False)
-        #self.busy_title.props_active = False
-        #GLib.idle_add(self.busy_title.stop())
+            new_file = self.does_exist(file, newdirectory, 0)
+            try:
+                shutil.move(directory+"/"+file, newdirectory+"/"+new_file)
+            except:
+                move_file_error = Gio.Notification.new("Error occurred!")
+                move_file_error.set_body("Trying to move files in Organizer failed")
+                move_file_error.set_icon(Gio.Icon.new_for_string("face-sad-symbolic"))
+                self.gio_application().send_notification(None, move_file_error)
+        GLib.idle_add(self.busy_title.set_visible, False)
+        self.busy_title.props_active = False
+        newdirectory_last_name = newdirectory.split('/').pop()
+        move_file_successful = Gio.Notification.new(newdirectory_last_name+" files moved successfully!")
+        move_file_successful.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
+        self.gio_application().send_notification(None, move_file_successful)
+        # so the popover can popdown before anything else happens
+        sleep(0.5)
+        if not len(visible_index_list)-1:
+            # only one category then
+            GLib.idle_add(self.go_back.hide,)
+            GLib.idle_add(self.subtitle.set_text,"")
+            GLib.idle_add(self.subtitle.set_visible, False)
+            GLib.idle_add(self.gtk_stack.set_visible_child, self.scrolled_start_screen)
+        else:
+            row_index = self.sidebar.get_selected_row().get_index()
+            row_index_in_visible = visible_index_list.index(row_index)
+            # remove older row index from index list
+            GLib.idle_add(visible_index_list.remove, row_index)
+            # hide da row
+            GLib.idle_add(self.sidebar.get_selected_row().set_visible, False)
+            # select row behind / forward
+            print(visible_index_list)
+            print(row_index_in_visible)
+            try:
+                print("TRy")
+                print(visible_index_list[int(row_index_in_visible)-1])
+                new_row_index = visible_index_list[row_index_in_visible-1]
+            except:
+                print("EXCEPT")
+                print(row_index_in_visible)
+                print(visible_index_list[int(row_index_in_visible)+1])
+                new_row_index = visible_index_list[row_index_in_visible+1]
+            # set that row as selected
+            GLib.idle_add(self.change_the_rows, new_row_index)
+                # select row in front
+        # move to previous listboxrow
+        # but if first, then next
+        # but if last, then go back home
+        # hide current listboxrow
 
     def move_files(self, directory, newdirectory, files):
-        print("TODO: move "+str(files[0])+" to "+str(newdirectory)+" from "+str(directory))
         self.busy_title.set_visible(True)
         self.busy_title.props_active= True
         self.busy_title.start()
-        move_thread = threading.Thread(target=self.move_files_threading, args=(directory, newdirectory, files, ))
+        move_thread = threading.Thread(target=self.move_files_threading, args=(directory, newdirectory, files,))
         move_thread.start()
 
     # files function separated, for threading
@@ -275,9 +324,13 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 else:
                     eval(first_mimetype).append(name)
         Gio_directory.close()
+        global visible_index_list
+        visible_index_list = []
         categories = [archives, text, ebooks, font, illustrations, image, audio, application, presentations, spreadsheets, video]
         for index, category in enumerate(categories):
             category = sorted(category, key=str.lower)
+            if len(category):
+                visible_index_list.append(index)
             if not len(category):
                 self.sidebar.get_row_at_index(index).set_visible(False)
                 # set the respective row to visible false
@@ -289,11 +342,20 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 filename_label.set_text(entry)
                 GLib.idle_add(eval("self."+category_names[index]+"_list").add, file_row)
         first_proper_category = next((i for i, x in enumerate(categories) if x), None)
-        self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
-        self.sidebar.select_row(self.sidebar.get_row_at_index(first_proper_category))
+        try:
+            GLib.idle_add(self.file_sorting.set_visible_child, eval("self."+category_names[first_proper_category]+"_column"))
+            GLib.idle_add(self.sidebar.select_row, self.sidebar.get_row_at_index(first_proper_category))
+            GLib.idle_add(self.stack_2.set_visible_child, self.sidebar_scrolled_window)
+            GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
+        except:
+            already_empty_error = Gio.Notification.new("Folder was already empty!")
+            already_empty_error.set_body("Organize another folder")
+            already_empty_error.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
+            self.gio_application().send_notification(None, already_empty_error)
+            self.go_back_clicked_cb("")
+            # in app notification that app already sorted
         
         # Hide the spinner from start screen
-        GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
         GLib.idle_add(self.spinner.destroy)
 
     # Back Button
@@ -385,7 +447,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # Unhide the back button
             self.go_back.show()
     def archives_move_clicked(self, button):
-        print(self.archive_location_option.get_active())
         if self.archive_location_option.get_active():
             archive_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Archive files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             archive_directory_chooser.set_transient_for(self)
@@ -395,7 +456,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = archive_directory_chooser.get_filename()
             archive_directory_chooser.destroy()
@@ -405,11 +465,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Archives"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, archives)
     def ebooks_move_clicked(self, button):
-        print(self.ebooks_location_option.get_active())
         if self.ebooks_location_option.get_active():
             ebooks_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Ebook files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             ebooks_directory_chooser.set_transient_for(self)
@@ -419,7 +478,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = ebooks_directory_chooser.get_filename()
             ebooks_directory_chooser.destroy()
@@ -429,11 +487,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Ebooks"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, ebooks)
     def font_move_clicked(self, button):
-        print(self.font_location_option.get_active())
         if self.font_location_option.get_active():
             font_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Font files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             font_directory_chooser.set_transient_for(self)
@@ -443,7 +500,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = font_directory_chooser.get_filename()
             font_directory_chooser.destroy()
@@ -453,11 +509,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Fonts"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, font)
     def illustrations_move_clicked(self, button):
-        print(self.illustrations_location_option.get_active())
         if self.illustrations_location_option.get_active():
             illustrations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Illustration files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             illustrations_directory_chooser.set_transient_for(self)
@@ -467,7 +522,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = illustrations_directory_chooser.get_filename()
             illustrations_directory_chooser.destroy()
@@ -477,11 +531,10 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Illustrations"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, illustrations)
     def application_move_clicked(self, button):
-        print(self.application_location_option.get_active())
         if self.application_location_option.get_active():
             application_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Other files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             application_directory_chooser.set_transient_for(self)
@@ -491,7 +544,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = application_directory_chooser.get_filename()
             application_directory_chooser.destroy()
@@ -501,12 +553,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Other"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, application)
 
     def presentations_move_clicked(self, button):
-        print(self.presentations_location_option.get_active())
         if self.presentations_location_option.get_active():
             presentations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Presentation files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             presentation_directory_chooser.set_transient_for(self)
@@ -516,7 +567,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = presentation_directory_chooser.get_filename()
             presentation_directory_chooser.destroy()
@@ -526,12 +576,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Presentations"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, presentations)
 
     def spreadsheets_move_clicked(self, button):
-        print(self.spreadsheets_location_option.get_active())
         if self.spreadsheets_location_option.get_active():
             spreadsheets_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Spreadsheet files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             spreadsheets_directory_chooser.set_transient_for(self)
@@ -541,7 +590,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = spreadsheets_directory_chooser.get_filename()
             spreadsheets_directory_chooser.destroy()
@@ -551,12 +599,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Spreadsheets"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, spreadsheets)
 
     def audio_move_clicked(self, button):
-        print(self.audio_location_option.get_active())
         if self.audio_location_option.get_active():
             audio_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Music files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             audio_directory_chooser.set_transient_for(self)
@@ -566,7 +613,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = audio_directory_chooser.get_filename()
             audio_directory_chooser.destroy()
@@ -576,12 +622,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Music"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, audio)
 
     def image_move_clicked(self, button):
-        print(self.image_location_option.get_active())
         if self.image_location_option.get_active():
             image_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Image files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             image_directory_chooser.set_transient_for(self)
@@ -591,7 +636,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = image_directory_chooser.get_filename()
             image_directory_chooser.destroy()
@@ -601,12 +645,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Images"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, image)
 
     def text_move_clicked(self, button):
-        print(self.text_location_option.get_active())
         if self.text_location_option.get_active():
             text_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Document files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             text_directory_chooser.set_transient_for(self)
@@ -616,7 +659,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = text_directory_chooser.get_filename()
             text_directory_chooser.destroy()
@@ -626,12 +668,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             newdirectory = directory+"/Documents"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
+            button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, text)
 
     def video_move_clicked(self, button):
-        print(self.video_location_option.get_active())
         if self.video_location_option.get_active():
             video_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Video files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
             video_directory_chooser.set_transient_for(self)
@@ -641,18 +682,14 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 response_type = True
             else:
                 response_type = False
-
             # Get foldername and then close the filechooser
             newdirectory = video_directory_chooser.get_filename()
             video_directory_chooser.destroy()
-            print(newdirectory)
-            
             # get filechooser, use that to move files
         else:
             response_type = True
             newdirectory = directory+"/Videos"
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
-            #GLib.mkdir_with_parents(newdirectory,755)
         if response_type:
             self.move_files(directory, newdirectory, video)
