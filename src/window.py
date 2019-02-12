@@ -374,7 +374,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog = Gtk.AboutDialog()
         dialog.set_modal(True)
         dialog.set_authors(['Avi Wadhwa'])
-        dialog.set_artists(["lol there's no artwork"])
+        dialog.set_artists(["Avi Wadhwa"])
         dialog.set_logo_icon_name("avi.wad.Organizer")#"data/icons/hicolor/scalable/apps/avi.wad.Organizer.svg")
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
