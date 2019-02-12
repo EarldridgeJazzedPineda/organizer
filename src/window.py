@@ -238,16 +238,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # hide da row
             self.sidebar.get_selected_row().set_visible(False)
             # select row behind / forward
-            print(visible_index_list)
-            print(row_index_in_visible)
             try:
-                print("TRy")
-                print(visible_index_list[int(row_index_in_visible)-1])
                 new_row_index = visible_index_list[row_index_in_visible-1]
             except:
-                print("EXCEPT")
-                print(row_index_in_visible)
-                print(visible_index_list[int(row_index_in_visible)+1])
                 new_row_index = visible_index_list[row_index_in_visible+1]
             # set that row as selected
             newer_row = self.sidebar.get_row_at_index(new_row_index)
@@ -274,7 +267,6 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 filename_label.set_text(entry)
                 eval("self."+category_names[index]+"_list").add(file_row)
         first_proper_category = next((i for i, x in enumerate(categories) if x), None)
-        print(first_proper_category)
         try:
             self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
             self.stack_2.set_visible_child(self.sidebar_scrolled_window)
