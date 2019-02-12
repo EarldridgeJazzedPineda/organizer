@@ -9,12 +9,6 @@
         "--socket=x11",
         "--socket=wayland",
         "--filesystem=home",
-        "--filesystem=xdg-desktop",
-        "--filesystem=xdg-documents",
-        "--filesystem=xdg-download",
-        "--filesystem=xdg-music",
-        "--filesystem=xdg-pictures",
-        "--filesystem=xdg-videos",
         "--filesystem=xdg-run/dconf",
         "--filesystem=~/.config/dconf:ro",
         "--talk-name=ca.desrt.dconf",
@@ -42,7 +36,10 @@
     	{   "name" : "libhandy",
             "buildsystem" : "meson",
             "config-opts": [
-                "-Dglade_catalog=disabled"
+                "-Dglade_catalog=disabled",
+                "-Dvapi=false",
+                "-Dtests=false",
+                "-Dexamples=false"
             ],
             "sources" : [
                 {
