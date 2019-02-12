@@ -215,21 +215,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             return file
         return self.does_exist(file, directory, index+1)
 
-    def change_the_rows(self,   new_row_index):
-        newer_row = self.sidebar.get_row_at_index(new_row_index)
-        self.sidebar.select_row(newer_row)
-        
-    def move_files_threading(self, directory, newdirectory, files):
-        for file in files:
-            new_file = self.does_exist(file, newdirectory, 0)
-            try:
-                shutil.move(directory+"/"+file, newdirectory+"/"+new_file)
-            except:
-                move_file_error = Gio.Notification.new("Error occurred!")
-                move_file_error.set_body("Trying to move files in Organizer failed")
-                move_file_error.set_icon(Gio.Icon.new_for_string("face-sad-symbolic"))
-                self.gio_application().send_notification(None, move_file_error)
-        GLib.idle_add(self.busy_title.set_visible, False)
+    def mainloop_after_move(self, newdirectory):
+        self.busy_title.set_visible(False)
         self.busy_title.props_active = False
         newdirectory_last_name = newdirectory.split('/').pop()
         move_file_successful = Gio.Notification.new(newdirectory_last_name+" files moved successfully!")
@@ -239,17 +226,17 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         sleep(0.5)
         if not len(visible_index_list)-1:
             # only one category then
-            GLib.idle_add(self.go_back.hide,)
-            GLib.idle_add(self.subtitle.set_text,"")
-            GLib.idle_add(self.subtitle.set_visible, False)
-            GLib.idle_add(self.gtk_stack.set_visible_child, self.scrolled_start_screen)
+            self.go_back.hide()
+            self.subtitle.set_text("")
+            self.subtitle.set_visible(False)
+            self.gtk_stack.set_visible_child(self.scrolled_start_screen)
         else:
             row_index = self.sidebar.get_selected_row().get_index()
             row_index_in_visible = visible_index_list.index(row_index)
             # remove older row index from index list
-            GLib.idle_add(visible_index_list.remove, row_index)
+            visible_index_list.remove(row_index)
             # hide da row
-            GLib.idle_add(self.sidebar.get_selected_row().set_visible, False)
+            self.sidebar.get_selected_row().set_visible(False)
             # select row behind / forward
             print(visible_index_list)
             print(row_index_in_visible)
@@ -263,18 +250,65 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 print(visible_index_list[int(row_index_in_visible)+1])
                 new_row_index = visible_index_list[row_index_in_visible+1]
             # set that row as selected
-            GLib.idle_add(self.change_the_rows, new_row_index)
+            newer_row = self.sidebar.get_row_at_index(new_row_index)
+            self.sidebar.select_row(newer_row)
+
+    def mainloop_after_mime(self):
+        # Hide the spinner from start screen
+        self.spinner.destroy()
+        global visible_index_list
+        visible_index_list = []
+        categories = [archives, text, ebooks, font, illustrations, image, audio, application, presentations, spreadsheets, video]
+        for index, category in enumerate(categories):
+            category = sorted(category, key=str.lower)
+            if len(category):
+                visible_index_list.append(index)
+            if not len(category):
+                self.sidebar.get_row_at_index(index).set_visible(False)
+                # set the respective row to visible false
+            for entry in category:
+                row = Gtk.Builder()
+                row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
+                file_row = row.get_object("file_row")
+                filename_label = row.get_object("filename_label")
+                filename_label.set_text(entry)
+                eval("self."+category_names[index]+"_list").add(file_row)
+        first_proper_category = next((i for i, x in enumerate(categories) if x), None)
+        print(first_proper_category)
+        try:
+            self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
+            self.stack_2.set_visible_child(self.sidebar_scrolled_window)
+            self.gtk_stack.set_visible_child(self.stack_2)
+        except:
+            already_empty_error = Gio.Notification.new("Folder was already empty!")
+            already_empty_error.set_body("Organize another folder")
+            already_empty_error.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
+            self.gio_application().send_notification(None, already_empty_error)
+            self.go_back_clicked_cb("")
+            # in app notification that app already sorted
+    def move_files_threading(self, directory, newdirectory, files, popover):
+        GLib.idle_add(popover.hide,)
+        for file in files:
+            new_file = self.does_exist(file, newdirectory, 0)
+            try:
+                shutil.move(directory+"/"+file, newdirectory+"/"+new_file)
+            except:
+                move_file_error = Gio.Notification.new("Error occurred!")
+                move_file_error.set_body("Trying to move files in Organizer failed")
+                move_file_error.set_icon(Gio.Icon.new_for_string("face-sad-symbolic"))
+                self.gio_application().send_notification(None, move_file_error)
+        GLib.idle_add(self.mainloop_after_move, newdirectory)
                 # select row in front
         # move to previous listboxrow
         # but if first, then next
         # but if last, then go back home
         # hide current listboxrow
 
-    def move_files(self, directory, newdirectory, files):
+    def move_files(self, directory, newdirectory, files, popover):
         self.busy_title.set_visible(True)
         self.busy_title.props_active= True
         self.busy_title.start()
-        move_thread = threading.Thread(target=self.move_files_threading, args=(directory, newdirectory, files,))
+        move_thread = threading.Thread(target=self.move_files_threading, args=(directory, newdirectory, files, popover,))
         move_thread.start()
 
     # files function separated, for threading
@@ -324,40 +358,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 else:
                     eval(first_mimetype).append(name)
         Gio_directory.close()
-        global visible_index_list
-        visible_index_list = []
-        categories = [archives, text, ebooks, font, illustrations, image, audio, application, presentations, spreadsheets, video]
-        for index, category in enumerate(categories):
-            category = sorted(category, key=str.lower)
-            if len(category):
-                visible_index_list.append(index)
-            if not len(category):
-                self.sidebar.get_row_at_index(index).set_visible(False)
-                # set the respective row to visible false
-            for entry in category:
-                row = Gtk.Builder()
-                row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
-                file_row = row.get_object("file_row")
-                filename_label = row.get_object("filename_label")
-                filename_label.set_text(entry)
-                GLib.idle_add(eval("self."+category_names[index]+"_list").add, file_row)
-        first_proper_category = next((i for i, x in enumerate(categories) if x), None)
-        try:
-            GLib.idle_add(self.file_sorting.set_visible_child, eval("self."+category_names[first_proper_category]+"_column"))
-            GLib.idle_add(self.sidebar.select_row, self.sidebar.get_row_at_index(first_proper_category))
-            GLib.idle_add(self.stack_2.set_visible_child, self.sidebar_scrolled_window)
-            GLib.idle_add(self.gtk_stack.set_visible_child, self.stack_2)
-        except:
-            already_empty_error = Gio.Notification.new("Folder was already empty!")
-            already_empty_error.set_body("Organize another folder")
-            already_empty_error.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
-            self.gio_application().send_notification(None, already_empty_error)
-            self.go_back_clicked_cb("")
-            # in app notification that app already sorted
-        
-        # Hide the spinner from start screen
-        GLib.idle_add(self.spinner.destroy)
-
+        GLib.idle_add(self.mainloop_after_mime,)
     # Back Button
     def go_back_clicked_cb(self, button):
 
@@ -466,8 +467,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, archives)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, archives, button.get_parent().get_parent().get_parent())
     def ebooks_move_clicked(self, button):
         if self.ebooks_location_option.get_active():
             ebooks_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Ebook files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -488,8 +489,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, ebooks)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, ebooks, button.get_parent().get_parent().get_parent())
     def font_move_clicked(self, button):
         if self.font_location_option.get_active():
             font_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Font files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -510,8 +511,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, font)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, font, button.get_parent().get_parent().get_parent())
     def illustrations_move_clicked(self, button):
         if self.illustrations_location_option.get_active():
             illustrations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Illustration files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -532,8 +533,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, illustrations)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, illustrations, button.get_parent().get_parent().get_parent())
     def application_move_clicked(self, button):
         if self.application_location_option.get_active():
             application_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Other files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -554,8 +555,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, application)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, application, button.get_parent().get_parent().get_parent())
 
     def presentations_move_clicked(self, button):
         if self.presentations_location_option.get_active():
@@ -577,8 +578,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, presentations)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, presentations, button.get_parent().get_parent().get_parent())
 
     def spreadsheets_move_clicked(self, button):
         if self.spreadsheets_location_option.get_active():
@@ -600,8 +601,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, spreadsheets)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, spreadsheets, button.get_parent().get_parent().get_parent())
 
     def audio_move_clicked(self, button):
         if self.audio_location_option.get_active():
@@ -623,8 +624,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, audio)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, audio, button.get_parent().get_parent().get_parent())
 
     def image_move_clicked(self, button):
         if self.image_location_option.get_active():
@@ -646,8 +647,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, image)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, image, button.get_parent().get_parent().get_parent())
 
     def text_move_clicked(self, button):
         if self.text_location_option.get_active():
@@ -669,8 +670,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            button.get_parent().get_parent().get_parent().popdown()
-            self.move_files(directory, newdirectory, text)
+            #button.get_parent().get_parent().get_parent().popdown()
+            self.move_files(directory, newdirectory, text, button.get_parent().get_parent().get_parent())
 
     def video_move_clicked(self, button):
         if self.video_location_option.get_active():
@@ -692,4 +693,4 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             if not os.path.exists(newdirectory):
                 os.mkdir(newdirectory)
         if response_type:
-            self.move_files(directory, newdirectory, video)
+            self.move_files(directory, newdirectory, video, button.get_parent().get_parent().get_parent())
