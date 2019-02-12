@@ -271,6 +271,11 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.file_sorting.set_visible_child(eval("self."+category_names[first_proper_category]+"_column"))
             self.stack_2.set_visible_child(self.sidebar_scrolled_window)
             self.gtk_stack.set_visible_child(self.stack_2)
+            # Change title to folder
+            self.subtitle.set_text(directory.split('/').pop())
+            self.subtitle.set_visible(True)
+            # Unhide the back button
+            self.go_back.show()
         except:
             already_empty_error = Gio.Notification.new("Folder was already empty!")
             already_empty_error.set_body("Organize another folder")
@@ -370,7 +375,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_modal(True)
         dialog.set_authors(['Avi Wadhwa'])
         dialog.set_artists(["lol there's no artwork"])
-        dialog.set_logo_icon_name(None)
+        dialog.set_logo_icon_name("avi.wad.Organizer")#"data/icons/hicolor/scalable/apps/avi.wad.Organizer.svg")
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
         dialog.set_translator_credits(_('translator-credits'))
@@ -430,15 +435,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.spinner.set_visible(True)
             self.spinner.props.active = True
             self.spinner.start()
-            directory_last_name = directory.split('/').pop()
             # separate thread to not hang up the entire GUI, and to render the spinner at the same time
             thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
             thread_testing.start()
-            # Change title to folder
-            self.subtitle.set_text(directory_last_name)
-            self.subtitle.set_visible(True)
-            # Unhide the back button
-            self.go_back.show()
     def archives_move_clicked(self, button):
         if self.archive_location_option.get_active():
             archive_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Archive files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
