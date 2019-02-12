@@ -3,6 +3,7 @@ Name=Organizer
 Exec=organizer
 Terminal=false
 Type=Application
+Icon=avi.wad.Organizer
 Categories=GTK;GNOME;Utility
 Keywords=organize,organise,file,sort,tidy
 StartupNotify=true
