@@ -2,8 +2,8 @@
 Organizer is a GTK Python app to organize your files into neat categories! It does it so by the filetype.
 
 ## Screenshots:
-<image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png</image>
-<image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png</image>
+![homescreen](https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png)
+![mobile screen](https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png)
 
 ## Features:
 * Organizes files
