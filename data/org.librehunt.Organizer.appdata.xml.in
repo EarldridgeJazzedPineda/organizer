@@ -31,10 +31,8 @@
 
   <screenshots type="default">
     <screenshot>
-      <!--image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png</image>
-      <image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png</image-->
-      <image type="source" width="1680" height="1023">https://adishatz.org/lollypop1.png</image>
-      <image type="source" width="1680" height="1023">https://adishatz.org/lollypop2.png</image>
+      <image type="source">https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png</image>
+      <image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png</image>
     </screenshot>
   </screenshots>
 </component>
