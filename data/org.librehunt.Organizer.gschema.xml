@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="organizer">
-	<schema id="avi.wad.Organizer" path="/avi/wad/Organizer/">
+	<schema id="org.librehunt.Organizer" path="/org/librehunt/Organizer/">
 	</schema>
 </schemalist>

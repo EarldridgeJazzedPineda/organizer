@@ -1,6 +1,6 @@
-data/avi.wad.Organizer.desktop.in
-data/avi.wad.Organizer.appdata.xml.in
-data/avi.wad.Organizer.gschema.xml
+data/org.librehunt.Organizer.desktop.in
+data/org.librehunt.Organizer.appdata.xml.in
+data/org.librehunt.Organizer.gschema.xml
 src/window.ui
 src/main.py
 src/window.py

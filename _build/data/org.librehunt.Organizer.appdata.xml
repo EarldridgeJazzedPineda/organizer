@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-	<id>avi.wad.Organizer.desktop</id>
-  <launchable type="desktop-id">avi.wad.Organizer.desktop</launchable>
-	<metadata_license>CC0-1.0</metadata_license>
-	<project_license>GPL-3.0-or-later</project_license>
+  <id>org.librehunt.Organizer.desktop</id>
+  <launchable type="desktop-id">org.librehunt.Organizer.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <content_rating type="oars-1.1"/>
   <name>Organizer</name>
   <summary>A utility to organize your files into neat categories.</summary>
-	<description>
+  <description>
     <p>Organizer shifts your files according to their filetype, making file organizing a breeze!</p>
     <p>Since the app is brand new, the features are a little limited:</p>
     <ul>
@@ -15,7 +15,7 @@
       <li>One click organization</li>
       <li>Constantly improving, just inform the developer! (in the link below)</li>
     </ul>
-	</description>
+  </description>
   <releases>
     <release version="0.9" date="2019-02-12">
       <description>

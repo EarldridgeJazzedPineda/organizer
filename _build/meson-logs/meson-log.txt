@@ -1,4 +1,4 @@
-Build started at 2019-02-12T19:04:38.817684
+Build started at 2019-02-13T09:33:07.263788
 Main binary: /usr/bin/python3.7
 Python system: Linux
 The Meson build system
@@ -10,23 +10,14 @@ Project name: organizer
 Project version: 0.1.0
 Build machine cpu family: x86_64
 Build machine cpu: x86_64
-Found pkg-config: /usr/bin/pkg-config (1.5.3)
-Determining dependency 'libhandy-0.0' with pkg-config executable '/usr/bin/pkg-config'
-Called `/usr/bin/pkg-config --modversion libhandy-0.0` -> 0
-0.0.7
-Called `/usr/bin/pkg-config --cflags libhandy-0.0` -> 0
--I/app/include/libhandy-0.0 -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/libffi-3.2.1/include -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/uuid -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/gio-unix-2.0 -I/usr/include/libdrm -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -pthread
-Called `/usr/bin/pkg-config libhandy-0.0 --libs` -> 0
--L/app/lib/ -lhandy-0.0 -L/usr/lib/x86_64-linux-gnu -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0
-Called `/usr/bin/pkg-config libhandy-0.0 --libs` -> 0
--L/app/lib/ -lhandy-0.0 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0
-Dependency libhandy-0.0 found: YES 0.0.7
+Dependency libhandy-0.0 found: YES (cached)
 Program desktop-file-validate found: YES (/usr/bin/desktop-file-validate)
 Adding test "Validate desktop file"
 Program appstream-util found: YES (/usr/bin/appstream-util)
 Adding test "Validate appstream file"
 Program glib-compile-schemas found: YES (/usr/bin/glib-compile-schemas)
 Adding test "Validate schema file"
+Found pkg-config: /usr/bin/pkg-config (1.5.3)
 Determining dependency 'glib-2.0' with pkg-config executable '/usr/bin/pkg-config'
 Called `/usr/bin/pkg-config --modversion glib-2.0` -> 0
 2.58.3

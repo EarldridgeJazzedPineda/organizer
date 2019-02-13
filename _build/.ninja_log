@@ -1,5 +1,12 @@
 # ninja log v5
-0	11	1549978479	src/organizer.gresource	78c4809cb7171ed0
-0	411	1549978479	data/avi.wad.Organizer.appdata.xml	ffc6c7d4f5f0d94e
-0	434	1549978479	data/avi.wad.Organizer.desktop	a2a1ec259a33d056
-0	844	0	meson-install	9bd7faa9472bf40f
+2	15	1550029686	src/organizer.gresource	78c4809cb7171ed0
+0	463	1550029686	data/avi.wad.Organizer.desktop	a2a1ec259a33d056
+0	464	1550029686	data/avi.wad.Organizer.appdata.xml	ffc6c7d4f5f0d94e
+0	854	0	meson-install	9bd7faa9472bf40f
+0	529	1550030587	build.ninja	6f549376c78e4586
+0	381	0	meson-clean-ctlist	3fa6da68e14169b6
+381	388	0	meson-clean	d59b6dac04fa9b5d
+1	12	1550030666	src/organizer.gresource	78c4809cb7171ed0
+0	388	1550030667	data/org.librehunt.Organizer.desktop	c86d779de998cba3
+1	391	1550030667	data/org.librehunt.Organizer.appdata.xml	5eca6bbf8948e9bd
+0	858	0	meson-install	9bd7faa9472bf40f

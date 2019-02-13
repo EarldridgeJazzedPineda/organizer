@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Organizer
+Exec=organizer
+Terminal=false
+Type=Application
+Icon=org.librehunt.Organizer
+Categories=GTK;GNOME;Utility
+Keywords=organize,organise,file,sort,tidy
+StartupNotify=true

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/avi/wad/Organizer">
+  <gresource prefix="/org/librehunt/Organizer">
     <file>window.ui</file>
     <file>row.ui</file>
   </gresource>

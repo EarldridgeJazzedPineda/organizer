@@ -27,7 +27,7 @@ from .window import OrganizerWindow
 
 class Application(Gtk.Application):
     def __init__(self):
-        super().__init__(application_id='avi.wad.Organizer',
+        super().__init__(application_id='org.librehunt.Organizer',
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def do_activate(self):

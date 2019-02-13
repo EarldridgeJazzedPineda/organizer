@@ -141,7 +141,7 @@ folders = [
     ]
 # to initiate the custom libhandy widgets
 Handy.init()
-@GtkTemplate("/avi/wad/Organizer/window.ui")
+@GtkTemplate("/org/librehunt/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
 
     # initializing widgets to be used later
@@ -261,7 +261,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
                 # set the respective row to visible false
             for entry in category:
                 row = Gtk.Builder()
-                row.add_objects_from_resource("/avi/wad/Organizer/row.ui", ("file_row", "filename_label"))
+                row.add_objects_from_resource("/org/librehunt/Organizer/row.ui", ("file_row", "filename_label"))
                 file_row = row.get_object("file_row")
                 filename_label = row.get_object("filename_label")
                 filename_label.set_text(entry)
@@ -375,7 +375,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_modal(True)
         dialog.set_authors(['Avi Wadhwa'])
         dialog.set_artists(["Avi Wadhwa"])
-        dialog.set_logo_icon_name("avi.wad.Organizer")#"data/icons/hicolor/scalable/apps/avi.wad.Organizer.svg")
+        dialog.set_logo_icon_name("org.librehunt.Organizer")#"data/icons/hicolor/scalable/apps/avi.wad.Organizer.svg")
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
         dialog.set_translator_credits(_('translator-credits'))
