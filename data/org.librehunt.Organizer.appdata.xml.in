@@ -26,8 +26,10 @@
     <category>Utility</category>
   </categories>
   <screenshots>
-    <screenshot type="default">
+    <screenshot>
       <image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png</image>
+    </screenshot>
+    <screenshot>
       <image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png</image>
     </screenshot>
   </screenshots>
