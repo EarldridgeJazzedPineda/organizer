@@ -21,9 +21,9 @@
   <project_group>GNOME</project_group>
 
   <releases>
-    <release version="0.102" date="2019-02-13">
+    <release version="0.103" date="2019-02-19">
       <description>
-        Updated version of module libhandy used, so Organizer runs properly on RTL languages!
+        Upgrade the logo
       </description>
     </release>
   </releases>

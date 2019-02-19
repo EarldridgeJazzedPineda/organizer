@@ -379,7 +379,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
         dialog.set_translator_credits(_('translator-credits'))
-        dialog.set_version('0.102')
+        dialog.set_version('0.103')
         dialog.set_comments(_('Organizes your files'))
         dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
         dialog.set_transient_for(self)
