@@ -45,7 +45,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/aviwad/Projects/Organizer"
+                    "url" : "https://gitlab.gnome.org/aviwad/organizer.git"
                 }
             ]
         }
