@@ -150,6 +150,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     stack_2 = GtkTemplate.Child()
     file_sorting = GtkTemplate.Child()
     go_back = GtkTemplate.Child()
+    go_back_revealer = GtkTemplate.Child()
+    subtitle_revealer = GtkTemplate.Child()
     start_screen = GtkTemplate.Child()
     header_bar = GtkTemplate.Child()
     sidebar = GtkTemplate.Child()
@@ -226,9 +228,8 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         sleep(0.5)
         if not len(visible_index_list)-1:
             # only one category then
-            self.go_back.hide()
-            self.subtitle.set_text("")
-            self.subtitle.set_visible(False)
+            self.go_back_revealer.set_reveal_child(False)
+            self.subtitle_revealer.set_reveal_child(False)
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
         else:
             row_index = self.sidebar.get_selected_row().get_index()
@@ -273,9 +274,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.gtk_stack.set_visible_child(self.stack_2)
             # Change title to folder
             self.subtitle.set_text(directory.split('/').pop())
-            self.subtitle.set_visible(True)
+            self.subtitle_revealer.set_reveal_child(True)
             # Unhide the back button
-            self.go_back.show()
+            self.go_back_revealer.set_reveal_child(True)
         except:
             already_empty_error = Gio.Notification.new("Folder was already empty!")
             already_empty_error.set_body("Organize another folder")
@@ -363,10 +364,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
             self.stack_2.set_visible_child(self.sidebar_scrolled_window)
         else:
-            # hide the back button and go to start screen
-            self.go_back.hide()
-            self.subtitle.set_text("")
-            self.subtitle.set_visible(False)
+            # hide the back button using gtkrevealer and go to start screen
+            self.go_back_revealer.set_reveal_child(False)
+            self.subtitle_revealer.set_reveal_child(False)
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
     # About Menu
