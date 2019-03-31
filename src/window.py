@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import Gtk, GLib, Handy, Gio
-from .gi_composites import GtkTemplate
+#from .gi_composites import GtkTemplate
 import threading
 import shutil
 # until I realize why GLib permissions are messed up
@@ -141,70 +141,71 @@ folders = [
     ]
 # to initiate the custom libhandy widgets
 Handy.init()
-@GtkTemplate("/org/librehunt/Organizer/window.ui")
+@Gtk.Template(resource_path="/org/librehunt/Organizer/window.ui")
 class OrganizerWindow(Gtk.ApplicationWindow):
+    __gtype_name__ = 'OrganizerWindow'
 
     # initializing widgets to be used later
-    subtitle = GtkTemplate.Child()
-    gtk_stack = GtkTemplate.Child()
-    stack_2 = GtkTemplate.Child()
-    file_sorting = GtkTemplate.Child()
-    go_back = GtkTemplate.Child()
-    go_back_revealer = GtkTemplate.Child()
-    subtitle_revealer = GtkTemplate.Child()
-    start_screen = GtkTemplate.Child()
-    header_bar = GtkTemplate.Child()
-    sidebar = GtkTemplate.Child()
-    sidebar_scrolled_window = GtkTemplate.Child()
-    scrolled_start_screen = GtkTemplate.Child()
+    subtitle = Gtk.Template.Child()
+    gtk_stack = Gtk.Template.Child()
+    stack_2 = Gtk.Template.Child()
+    file_sorting = Gtk.Template.Child()
+    go_back = Gtk.Template.Child()
+    go_back_revealer = Gtk.Template.Child()
+    subtitle_revealer = Gtk.Template.Child()
+    start_screen = Gtk.Template.Child()
+    header_bar = Gtk.Template.Child()
+    sidebar = Gtk.Template.Child()
+    sidebar_scrolled_window = Gtk.Template.Child()
+    scrolled_start_screen = Gtk.Template.Child()
     spinner = Gtk.Spinner()
-    busy_title = GtkTemplate.Child()
-    gio_application = Gio.Application.get_default
+    busy_title = Gtk.Template.Child()
+    inappnotification_revealer = Gtk.Template.Child()
+    inappnotification_button = Gtk.Template.Child()
+    inappnotification_label = Gtk.Template.Child()
 
     # all lists
-    application_list = GtkTemplate.Child()
-    archives_list = GtkTemplate.Child()
-    audio_list = GtkTemplate.Child()
-    ebooks_list = GtkTemplate.Child()
-    font_list = GtkTemplate.Child()
-    illustrations_list = GtkTemplate.Child()
-    image_list = GtkTemplate.Child()
-    presentations_list = GtkTemplate.Child()
-    spreadsheets_list = GtkTemplate.Child()
-    text_list = GtkTemplate.Child()
-    video_list = GtkTemplate.Child()
+    application_list = Gtk.Template.Child()
+    archives_list = Gtk.Template.Child()
+    audio_list = Gtk.Template.Child()
+    ebooks_list = Gtk.Template.Child()
+    font_list = Gtk.Template.Child()
+    illustrations_list = Gtk.Template.Child()
+    image_list = Gtk.Template.Child()
+    presentations_list = Gtk.Template.Child()
+    spreadsheets_list = Gtk.Template.Child()
+    text_list = Gtk.Template.Child()
+    video_list = Gtk.Template.Child()
 
     # all columns
-    application_column = GtkTemplate.Child()
-    archives_column = GtkTemplate.Child()
-    audio_column = GtkTemplate.Child()
-    ebooks_column = GtkTemplate.Child()
-    font_column = GtkTemplate.Child()
-    illustrations_column = GtkTemplate.Child()
-    image_column = GtkTemplate.Child()
-    presentations_column = GtkTemplate.Child()
-    spreadsheets_column = GtkTemplate.Child()
-    text_column = GtkTemplate.Child()
-    video_column = GtkTemplate.Child()
+    application_column = Gtk.Template.Child()
+    archives_column = Gtk.Template.Child()
+    audio_column = Gtk.Template.Child()
+    ebooks_column = Gtk.Template.Child()
+    font_column = Gtk.Template.Child()
+    illustrations_column = Gtk.Template.Child()
+    image_column = Gtk.Template.Child()
+    presentations_column = Gtk.Template.Child()
+    spreadsheets_column = Gtk.Template.Child()
+    text_column = Gtk.Template.Child()
+    video_column = Gtk.Template.Child()
 
     # all category location options
-    archive_location_option = GtkTemplate.Child()
-    ebooks_location_option = GtkTemplate.Child()
-    font_location_option = GtkTemplate.Child()
-    illustrations_location_option = GtkTemplate.Child()
-    application_location_option = GtkTemplate.Child()
-    presentations_location_option = GtkTemplate.Child()
-    spreadsheets_location_option = GtkTemplate.Child()
-    audio_location_option = GtkTemplate.Child()
-    image_location_option = GtkTemplate.Child()
-    text_location_option = GtkTemplate.Child()
-    video_location_option = GtkTemplate.Child()
-    
-    __gtype_name__ = 'OrganizerWindow'
+    archive_location_option = Gtk.Template.Child()
+    ebooks_location_option = Gtk.Template.Child()
+    font_location_option = Gtk.Template.Child()
+    illustrations_location_option = Gtk.Template.Child()
+    application_location_option = Gtk.Template.Child()
+    presentations_location_option = Gtk.Template.Child()
+    spreadsheets_location_option = Gtk.Template.Child()
+    audio_location_option = Gtk.Template.Child()
+    image_location_option = Gtk.Template.Child()
+    text_location_option = Gtk.Template.Child()
+    video_location_option = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.init_template()
+        #self.init_template()
 
     def does_exist(self, file, directory, index):
         filename, file_extension = os.path.splitext(file)
@@ -221,9 +222,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         self.busy_title.set_visible(False)
         self.busy_title.props_active = False
         newdirectory_last_name = newdirectory.split('/').pop()
-        move_file_successful = Gio.Notification.new(newdirectory_last_name+" files moved successfully!")
-        move_file_successful.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
-        self.gio_application().send_notification(None, move_file_successful)
+        self.inappnotification_revealer.set_reveal_child(False)
+        self.inappnotification_label.set_text("Files moved successfully")
+        self.inappnotification_revealer.set_reveal_child(True)
         # so the popover can popdown before anything else happens
         sleep(0.5)
         if not len(visible_index_list)-1:
@@ -278,10 +279,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # Unhide the back button
             self.go_back_revealer.set_reveal_child(True)
         except:
-            already_empty_error = Gio.Notification.new("Folder was already empty!")
-            already_empty_error.set_body("Organize another folder")
-            already_empty_error.set_icon(Gio.Icon.new_for_string("folder-symbolic"))
-            self.gio_application().send_notification(None, already_empty_error)
+            self.inappnotification_revealer.set_reveal_child(False)
+            self.inappnotification_label.set_text("Folder was already empty")
+            self.inappnotification_revealer.set_reveal_child(True)
             self.go_back_clicked_cb("")
             # in app notification that app already sorted
     def move_files_threading(self, directory, newdirectory, files, popover):
@@ -291,10 +291,9 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             try:
                 shutil.move(directory+"/"+file, newdirectory+"/"+new_file)
             except:
-                move_file_error = Gio.Notification.new("Error occurred!")
-                move_file_error.set_body("Trying to move files in Organizer failed")
-                move_file_error.set_icon(Gio.Icon.new_for_string("face-sad-symbolic"))
-                self.gio_application().send_notification(None, move_file_error)
+                self.inappnotification_revealer.set_reveal_child(False)
+                self.inappnotification_label.set_text("Error occurred")
+                self.inappnotification_revealer.set_reveal_child(True)
         GLib.idle_add(self.mainloop_after_move, newdirectory)
                 # select row in front
         # move to previous listboxrow
@@ -358,6 +357,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         Gio_directory.close()
         GLib.idle_add(self.mainloop_after_mime,)
     # Back Button
+    @Gtk.Template.Callback()
     def go_back_clicked_cb(self, button):
 
         # if is folded on content then go to sidebar, otherwise actual back to startscreen
@@ -369,7 +369,13 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             self.subtitle_revealer.set_reveal_child(False)
             self.gtk_stack.set_visible_child(self.scrolled_start_screen)
 
+    # In app notification close button
+    @Gtk.Template.Callback()
+    def inappnotification_button_clicked_cb(self, button):
+        self.inappnotification_revealer.set_reveal_child(False)
+
     # About Menu
+    @Gtk.Template.Callback()
     def on_about_button_clicked(self, button):
         dialog = Gtk.AboutDialog()
         dialog.set_modal(True)
@@ -379,18 +385,19 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_license_type(Gtk.License.GPL_3_0)
         dialog.set_program_name(('Organizer'))
         dialog.set_translator_credits(_('translator-credits'))
-        dialog.set_version('0.103')
+        dialog.set_version('0.2')
         dialog.set_comments(_('Organizes your files'))
         dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
         dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()
-
+    @Gtk.Template.Callback()
     def category_row_clicked(self, widget, row):
         self.file_sorting.set_visible_child(eval("self."+category_names[row.get_index()]+"_column"))
         self.stack_2.set_visible_child(self.file_sorting)
 
     # When any location is clicked on homescreen
+    @Gtk.Template.Callback()
     def row_activated(self, widget, row):
         # loop and delete all previous all ListBoxRows
         list_of_listboxes = [self.application_list,self.archives_list,
@@ -438,6 +445,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             # separate thread to not hang up the entire GUI, and to render the spinner at the same time
             thread_testing = threading.Thread(target=self.print_mimes, args=(directory,))
             thread_testing.start()
+    @Gtk.Template.Callback()
     def archives_move_clicked(self, button):
         if self.archive_location_option.get_active():
             archive_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Archive files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -460,6 +468,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         if response_type:
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, archives, button.get_parent().get_parent().get_parent())
+    @Gtk.Template.Callback()
     def ebooks_move_clicked(self, button):
         if self.ebooks_location_option.get_active():
             ebooks_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Ebook files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -482,6 +491,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         if response_type:
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, ebooks, button.get_parent().get_parent().get_parent())
+    @Gtk.Template.Callback()
     def font_move_clicked(self, button):
         if self.font_location_option.get_active():
             font_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Font files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -504,6 +514,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         if response_type:
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, font, button.get_parent().get_parent().get_parent())
+    @Gtk.Template.Callback()
     def illustrations_move_clicked(self, button):
         if self.illustrations_location_option.get_active():
             illustrations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Illustration files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -526,6 +537,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         if response_type:
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, illustrations, button.get_parent().get_parent().get_parent())
+    @Gtk.Template.Callback()
     def application_move_clicked(self, button):
         if self.application_location_option.get_active():
             application_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Other files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -549,6 +561,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, application, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def presentations_move_clicked(self, button):
         if self.presentations_location_option.get_active():
             presentations_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Presentation files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -572,6 +585,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, presentations, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def spreadsheets_move_clicked(self, button):
         if self.spreadsheets_location_option.get_active():
             spreadsheets_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Spreadsheet files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -595,6 +609,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, spreadsheets, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def audio_move_clicked(self, button):
         if self.audio_location_option.get_active():
             audio_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Music files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -618,6 +633,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, audio, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def image_move_clicked(self, button):
         if self.image_location_option.get_active():
             image_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Image files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -641,6 +657,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, image, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def text_move_clicked(self, button):
         if self.text_location_option.get_active():
             text_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Document files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))
@@ -664,6 +681,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
             #button.get_parent().get_parent().get_parent().popdown()
             self.move_files(directory, newdirectory, text, button.get_parent().get_parent().get_parent())
 
+    @Gtk.Template.Callback()
     def video_move_clicked(self, button):
         if self.video_location_option.get_active():
             video_directory_chooser = Gtk.FileChooserDialog('Choose where to move the Video files', None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Select', Gtk.ResponseType.OK))

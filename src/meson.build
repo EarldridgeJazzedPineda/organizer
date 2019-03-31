@@ -27,7 +27,6 @@ configure_file(
 
 organizer_sources = [
   '__init__.py',
-  'gi_composites.py',
   'main.py',
   'window.py',
 ]
