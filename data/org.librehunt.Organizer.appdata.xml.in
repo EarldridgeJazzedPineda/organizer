@@ -21,14 +21,9 @@
   <project_group>GNOME</project_group>
 
   <releases>
-    <release version="0.2" date="2019-03-31">
+    <release version="0.201" date="2019-03-31">
       <description>
         Get more animations throughout, shift from notifications to in-app notifications, upgrade code infrastructure (Gtk Templates)
-      </description>
-    </release>
-    <release version="0.103" date="2019-02-19">
-      <description>
-        Upgrade the logo
       </description>
     </release>
   </releases>
