@@ -1,6 +1,7 @@
 # main.py
 #
 # Copyright 2019 Avi Wadhwa
+# Copyright 2024 Earldridge Jazzed Pineda
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
 import sys
 import gi
-gi.require_version('Handy', '0.0')
+gi.require_version('Handy', '1')
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Gio

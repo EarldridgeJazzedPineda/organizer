@@ -4,7 +4,7 @@ project('organizer',         version: '0.1.0',
 
 i18n = import('i18n')
 
-dependency('libhandy-0.0', version :'>=0.0.3')
+dependency('libhandy-1')
 
 subdir('data')
 subdir('src')

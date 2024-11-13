@@ -1,6 +1,7 @@
 # window.py
 #
 # Copyright 2019 Avi Wadhwa
+# Copyright 2024 Earldridge Jazzed Pineda
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -361,7 +362,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
     def go_back_clicked_cb(self, button):
 
         # if is folded on content then go to sidebar, otherwise actual back to startscreen
-        if self.stack_2.get_fold().value_name == "HDY_FOLD_FOLDED" and self.stack_2.get_visible_child().get_name() == "GtkStack":
+        if self.stack_2.get_folded() and self.stack_2.get_visible_child().get_name() == "GtkStack":
             self.stack_2.set_visible_child(self.sidebar_scrolled_window)
         else:
             # hide the back button using gtkrevealer and go to start screen

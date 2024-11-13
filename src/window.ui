@@ -957,12 +957,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="HdyColumn">
+                          <object class="HdyClamp">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="valign">center</property>
-                            <property name="maximum_width">700</property>
-                            <property name="linear_growth_width">500</property>
+                            <property name="maximum_size">700</property>
+                            <property name="tightening_threshold">500</property>
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
@@ -1402,8 +1402,7 @@
                 <property name="can_focus">False</property>
                 <property name="visible_child">sidebar</property>
                 <property name="visible_child_name">sidebar</property>
-                <property name="mode_transition_type">slide</property>
-                <property name="child_transition_type">slide</property>
+                <property name="transition_type">slide</property>
                 <child>
                   <object class="GtkScrolledWindow" id="sidebar_scrolled_window">
                     <property name="width_request">200</property>
@@ -1636,11 +1635,11 @@
                     <property name="transition_duration">100</property>
                     <property name="transition_type">crossfade</property>
                     <child>
-                      <object class="HdyColumn" id="archives_column">
+                      <object class="HdyClamp" id="archives_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -1766,11 +1765,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="ebooks_column">
+                      <object class="HdyClamp" id="ebooks_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -1897,11 +1896,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="font_column">
+                      <object class="HdyClamp" id="font_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2028,11 +2027,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="illustrations_column">
+                      <object class="HdyClamp" id="illustrations_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2159,11 +2158,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="image_column">
+                      <object class="HdyClamp" id="image_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2290,11 +2289,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="audio_column">
+                      <object class="HdyClamp" id="audio_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2421,11 +2420,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="application_column">
+                      <object class="HdyClamp" id="application_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2552,11 +2551,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="presentations_column">
+                      <object class="HdyClamp" id="presentations_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2683,11 +2682,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="spreadsheets_column">
+                      <object class="HdyClamp" id="spreadsheets_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2814,11 +2813,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="text_column">
+                      <object class="HdyClamp" id="text_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -2945,11 +2944,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="HdyColumn" id="video_column">
+                      <object class="HdyClamp" id="video_column">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="maximum_width">700</property>
-                        <property name="linear_growth_width">500</property>
+                        <property name="maximum_size">700</property>
+                        <property name="tightening_threshold">500</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
