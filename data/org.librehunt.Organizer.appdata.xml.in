@@ -17,6 +17,7 @@
       <li>Constantly improving, just inform the developer! (in the link below)</li>
     </ul>
 	</description>
+  <url type="homepage">https://gitlab.gnome.org/aviwad/organizer</url>
   <url type="bugtracker">https://gitlab.gnome.org/aviwad/organizer/issues</url>
   <project_group>GNOME</project_group>
 
