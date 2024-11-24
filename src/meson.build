@@ -9,10 +9,10 @@ gnome.compile_resources('organizer',
   install_dir: pkgdatadir,
 )
 
-python3 = import('python3')
+python3 = import('python')
 
 conf = configuration_data()
-conf.set('PYTHON', python3.find_python().path())
+conf.set('PYTHON', python3.find_installation().full_path())
 conf.set('VERSION', meson.project_version())
 conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
 conf.set('pkgdatadir', pkgdatadir)
