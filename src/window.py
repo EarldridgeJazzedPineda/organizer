@@ -388,7 +388,7 @@ class OrganizerWindow(Gtk.ApplicationWindow):
         dialog.set_translator_credits(_('translator-credits'))
         dialog.set_version('0.201')
         dialog.set_comments(_('Organizes your files'))
-        dialog.set_website('https://gitlab.gnome.org/aviwad/organizer')
+        dialog.set_website('https://github.com/aviwad/organizer')
         dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()

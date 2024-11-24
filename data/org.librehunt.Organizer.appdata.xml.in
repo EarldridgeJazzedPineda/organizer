@@ -17,8 +17,8 @@
       <li>Constantly improving, just inform the developer! (in the link below)</li>
     </ul>
 	</description>
-  <url type="homepage">https://gitlab.gnome.org/aviwad/organizer</url>
-  <url type="bugtracker">https://gitlab.gnome.org/aviwad/organizer/issues</url>
+  <url type="homepage">https://github.com/aviwad/organizer</url>
+  <url type="bugtracker">https://github.com/aviwad/organizer/issues</url>
   <project_group>GNOME</project_group>
 
   <releases>
@@ -35,8 +35,8 @@
 
   <screenshots type="default">
     <screenshot>
-      <image type="source">https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/homescreen.png</image>
-      <image>https://gitlab.gnome.org/aviwad/organizer/raw/master/screenshots/music.png</image>
+      <image type="source">https://raw.githubusercontent.com/aviwad/organizer/master/screenshots/homescreen.png</image>
+      <image>https://raw.githubusercontent.com/aviwad/organizer/master/screenshots/music.png</image>
     </screenshot>
   </screenshots>
 </component>
