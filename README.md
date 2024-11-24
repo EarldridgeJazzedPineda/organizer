@@ -15,4 +15,4 @@ Organizer is a GTK Python app to organize your files into neat categories! It do
 <a href='https://flathub.org/apps/details/org.librehunt.Organizer'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
 ## Building from source
-Open my code in Gnome Builder (clone it), and Run it, Builder should automagically do everything for you! Then you can "export bundle" if you wish.
+Install Meson (at least version 0.55.0), and run `meson setup builddir` followed by `meson install -C builddir` in the Organizer directory.
