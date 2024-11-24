@@ -1,8 +1,4 @@
-make icon
-add appdata information for FlatHub
-make the move button work and move the files
-get progress bar for the same
-in app notification for when moving is done (or global notification if no focus)
+get progress bar for moving the files
 
 for later:
 make a popover + function to move the files to different categories or remove them
